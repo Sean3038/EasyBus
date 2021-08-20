@@ -30,11 +30,11 @@ import com.examprepare.easybus.ui.theme.EasyBusTheme
 
 @Composable
 fun SearchRouteScreen(viewModel: SearchRouteViewModel, toRoute: (String) -> Unit) {
-    val searchRouteName = viewModel.searchRouteName.collectAsState()
-    val routes = viewModel.routes.collectAsState()
+    val searchRouteName = viewModel.searchRouteName.collectAsState().value
+    val routes = viewModel.routes.collectAsState().value
     SearchRoute(
-        searchText = searchRouteName.value,
-        routes = routes.value,
+        searchText = searchRouteName,
+        routes = routes,
         onSearchChange = viewModel::onSearchChange,
         toRoute = toRoute
     )

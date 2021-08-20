@@ -12,8 +12,9 @@ import com.examprepare.easybus.core.repository.LikeRouteRepository
 import com.examprepare.easybus.core.repository.RouteRepository
 import com.examprepare.easybus.core.service.PTXApi
 import com.examprepare.easybus.core.service.PTXService
-import com.examprepare.easybus.feature.searchroute.domain.usecase.GetAllRoute
 import com.examprepare.easybus.feature.home.domain.usecase.GetFavoriteRoutes
+import com.examprepare.easybus.feature.route.domain.usecase.GetRoute
+import com.examprepare.easybus.feature.searchroute.domain.usecase.GetAllRoute
 import com.examprepare.easybus.feature.searchroute.domain.usecase.SearchRoute
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -112,13 +113,19 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providerGetRoute(routeRepository: RouteRepository): GetRoute {
+        return GetRoute(routeRepository)
+    }
+
+    @Provides
+    @Singleton
     fun providerGetAllRoute(routeRepository: RouteRepository): GetAllRoute {
         return GetAllRoute(routeRepository)
     }
 
     @Provides
     @Singleton
-    fun providerGetRoute(routeRepository: RouteRepository): SearchRoute {
+    fun providerSearchRoute(routeRepository: RouteRepository): SearchRoute {
         return SearchRoute(routeRepository)
     }
 

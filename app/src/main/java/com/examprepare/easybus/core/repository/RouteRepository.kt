@@ -12,6 +12,7 @@ import javax.inject.Inject
 
 interface RouteRepository {
     suspend fun search(routeName: String): Either<Failure, List<Route>>
+    suspend fun route(routeId: String): Either<Failure, Route>
     suspend fun routes(): Either<Failure, List<Route>>
 
 
@@ -36,6 +37,25 @@ interface RouteRepository {
                                 .map { Route(it.RouteID, it.RouteName) }
                                 .toList()
                         )
+                    }
+                    false -> Either.Left(Failure.ServerError)
+                }
+            } catch (exception: Throwable) {
+                Timber.e(exception)
+                Either.Left(Failure.ServerError)
+            }
+        }
+
+        override suspend fun route(routeId: String): Either<Failure, Route> {
+            return try {
+                when (networkHandler.isNetworkAvailable()) {
+                    true -> {
+                        //若沒有暫存則下載資料
+                        val routeEntity = cacheDatabase.routeEntity().getAll()
+                            .takeIf { it.isNotEmpty() } ?: fetchAndCache()
+                        val result = routeEntity
+                            .find { routeId == it.RouteID }?.toRoute() ?: return Either.Left(Failure.ServerError)
+                        Either.Right(result)
                     }
                     false -> Either.Left(Failure.ServerError)
                 }
