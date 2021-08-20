@@ -13,7 +13,9 @@ import com.examprepare.easybus.core.repository.RouteRepository
 import com.examprepare.easybus.core.service.PTXApi
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.home.domain.usecase.GetFavoriteRoutes
+import com.examprepare.easybus.feature.route.domain.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.route.domain.usecase.GetRoute
+import com.examprepare.easybus.feature.route.domain.usecase.RemoveLikeRoute
 import com.examprepare.easybus.feature.searchroute.domain.usecase.GetAllRoute
 import com.examprepare.easybus.feature.searchroute.domain.usecase.SearchRoute
 import com.google.gson.Gson
@@ -127,6 +129,18 @@ object AppModule {
     @Singleton
     fun providerSearchRoute(routeRepository: RouteRepository): SearchRoute {
         return SearchRoute(routeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providerAddLikeRoute(routeRepository: LikeRouteRepository): AddLikeRoute {
+        return AddLikeRoute(routeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providerRemoveLikeRoute(routeRepository: LikeRouteRepository): RemoveLikeRoute {
+        return RemoveLikeRoute(routeRepository)
     }
 
     @Provides

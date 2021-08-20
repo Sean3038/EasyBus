@@ -11,6 +11,7 @@ interface LikeRouteRepository {
     suspend fun likesRoutes(): Either<Failure, List<LikeRoute>>
     suspend fun addLikeRoute(likeRoute: LikeRoute): Either<Failure, Unit>
     suspend fun removeLikeRoute(likeRoute: LikeRoute): Either<Failure, Unit>
+    suspend fun isLikeRoute(routeId: String): Either<Failure, Boolean>
 
     class Impl
     @Inject constructor(
@@ -26,8 +27,12 @@ interface LikeRouteRepository {
         }
 
         override suspend fun removeLikeRoute(likeRoute: LikeRoute): Either<Failure, Unit> {
-            personalDataBase.likeRouteDao().insertAll(LikeRouteEntity(likeRoute.routeId))
+            personalDataBase.likeRouteDao().delete(LikeRouteEntity(likeRoute.routeId))
             return Either.Right(Unit)
+        }
+
+        override suspend fun isLikeRoute(routeId: String): Either<Failure, Boolean> {
+            return Either.Right(personalDataBase.likeRouteDao().get(routeId) != null)
         }
 
     }

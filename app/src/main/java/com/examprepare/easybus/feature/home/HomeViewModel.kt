@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
     private val _favoriteRoutes = MutableStateFlow<List<FavoriteRoute>>(emptyList())
     val favoriteRoutes = _favoriteRoutes.asStateFlow()
 
-    init {
+    fun getFavoriteRoutes() {
         viewModelScope.launch {
             getFavoriteRoutes.run(UseCase.None()).fold(::handleFailure, ::handleGetFavoriteRoutes)
         }

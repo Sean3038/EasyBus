@@ -1,24 +1,21 @@
 package com.examprepare.easybus.feature.route
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.examprepare.easybus.core.ui.FailureView
 import com.examprepare.easybus.feature.searchroute.domain.model.Route
 import com.examprepare.easybus.ui.theme.EasyBusTheme
@@ -26,6 +23,7 @@ import com.examprepare.easybus.ui.theme.EasyBusTheme
 @Composable
 fun RouteScreen(viewModel: RouteViewModel, routeName: String, onBack: () -> Unit) {
     val route = viewModel.route.collectAsState().value
+    val isLike = viewModel.isLike.collectAsState().value
     val failure = viewModel.failure.collectAsState().value
 
     LaunchedEffect(Unit) {
@@ -33,35 +31,54 @@ fun RouteScreen(viewModel: RouteViewModel, routeName: String, onBack: () -> Unit
     }
     Route(
         route = route,
-        onBack = onBack
+        isLike = isLike,
+        onBack = onBack,
+        onLike = viewModel::addLikeRoute,
+        onRemoveLike = viewModel::removeLikeRoute
     )
     FailureView(failure = failure)
 }
 
 @Composable
-fun Route(route: Route, onBack: () -> Unit) {
+fun Route(
+    route: Route,
+    isLike: Boolean,
+    onBack: () -> Unit,
+    onLike: (String) -> Unit,
+    onRemoveLike: (String) -> Unit
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
+        modifier = Modifier.fillMaxSize()
     ) {
-        TopAppBar(
-            title = {
-                Row {
-                    Text(text = "EasyBus")
+        Scaffold(topBar = {
+            TopAppBar(
+                title = {
+                    Text("公車動態-${route.routeName}")
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Sharp.ArrowBack, contentDescription = "退回上一頁")
+                    }
+                },
+                actions = {
+                    if (isLike) {
+                        IconButton(
+                            onClick = { onRemoveLike(route.routeId) }
+                        ) {
+                            Icon(Icons.Filled.Favorite, contentDescription = "移除我的最愛路線")
+                        }
+                    } else {
+                        IconButton(
+                            onClick = { onLike(route.routeId) }
+                        ) {
+                            Icon(Icons.Outlined.FavoriteBorder, contentDescription = "新增我的最愛路線")
+                        }
+                    }
                 }
-            },
-            navigationIcon = {
-                Icon(
-                    Icons.Sharp.ArrowBack,
-                    modifier = Modifier
-                        .clickable { onBack() }
-                        .padding(8.dp),
-                    contentDescription = "退回上一頁"
-                )
-            }
-        )
-        Text(text = route.routeName)
+            )
+        }) {
+            Text(text = route.routeName)
+        }
     }
 }
 
@@ -71,7 +88,11 @@ fun Route(route: Route, onBack: () -> Unit) {
 private fun RouteScreenPreview() {
     EasyBusTheme {
         Route(
-            Route("01", "紅11")
-        ) { }
+            route = Route("01", "紅12"),
+            isLike = true,
+            onBack = { },
+            onLike = { },
+            onRemoveLike = { }
+        )
     }
 }

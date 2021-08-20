@@ -1,7 +1,6 @@
 package com.examprepare.easybus.feature.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +29,10 @@ fun HomeScreen(
     val favoriteRoutes = viewModel.favoriteRoutes.collectAsState().value
     val failure = viewModel.failure.collectAsState().value
 
+    LaunchedEffect(Unit) {
+        viewModel.getFavoriteRoutes()
+    }
+
     Home(
         favoriteRoutes = favoriteRoutes,
         toSearchRoute = toSearchRoute,
@@ -45,34 +49,33 @@ fun Home(
     toSearchNearStop: () -> Unit,
     openRoute: (String) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-    ) {
-        TitleBar()
-
-        Button(
+    Scaffold(topBar = { TitleBar() }) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(8.dp),
-            onClick = toSearchRoute
+                .fillMaxSize()
         ) {
-            Text(text = "搜尋路線", style = MaterialTheme.typography.body1)
-        }
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(8.dp),
+                onClick = toSearchRoute
+            ) {
+                Text(text = "搜尋路線", style = MaterialTheme.typography.body1)
+            }
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(8.dp),
-            onClick = toSearchNearStop
-        ) {
-            Text(text = "搜尋付近站牌", style = MaterialTheme.typography.body1)
-        }
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(8.dp),
+                onClick = toSearchNearStop
+            ) {
+                Text(text = "搜尋付近站牌", style = MaterialTheme.typography.body1)
+            }
 
-        LikeRoutesView(favoriteRoutes, openRoute)
+            LikeRoutesView(favoriteRoutes, openRoute)
+        }
     }
 }
 
@@ -102,7 +105,7 @@ fun LikeRoutesView(favoriteRoutes: List<FavoriteRoute>, openRoute: (String) -> U
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { openRoute(item.routeName) }
+                            .clickable { openRoute(item.routeId) }
                             .padding(8.dp),
                         text = item.routeName,
                         style = MaterialTheme.typography.body1,
