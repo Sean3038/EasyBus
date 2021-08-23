@@ -10,12 +10,14 @@ import com.examprepare.easybus.core.interceptor.PtxRequestInterceptor
 import com.examprepare.easybus.core.platform.NetworkHandler
 import com.examprepare.easybus.core.repository.LikeRouteRepository
 import com.examprepare.easybus.core.repository.RouteRepository
+import com.examprepare.easybus.core.repository.StopRepository
 import com.examprepare.easybus.core.service.PTXApi
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.home.domain.usecase.GetFavoriteRoutes
 import com.examprepare.easybus.feature.route.domain.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.route.domain.usecase.GetRoute
 import com.examprepare.easybus.feature.route.domain.usecase.RemoveLikeRoute
+import com.examprepare.easybus.feature.searchnearstop.domain.usecase.GetNearStop
 import com.examprepare.easybus.feature.searchroute.domain.usecase.GetAllRoute
 import com.examprepare.easybus.feature.searchroute.domain.usecase.SearchRoute
 import com.google.gson.Gson
@@ -97,6 +99,16 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providerStopRepository(
+        ptxService: PTXService,
+        ptxDataBase: PTXDataBase,
+        networkHandler: NetworkHandler
+    ): StopRepository {
+        return StopRepository.Impl(networkHandler, ptxService, ptxDataBase)
+    }
+
+    @Provides
+    @Singleton
     fun providerRouteRepository(
         ptxService: PTXService,
         ptxDataBase: PTXDataBase,
@@ -150,6 +162,14 @@ object AppModule {
         routeRepository: RouteRepository
     ): GetFavoriteRoutes {
         return GetFavoriteRoutes(likeRouteRepository, routeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providerGetNearStop(
+        stopRepository: StopRepository,
+    ): GetNearStop {
+        return GetNearStop(stopRepository)
     }
 
 }

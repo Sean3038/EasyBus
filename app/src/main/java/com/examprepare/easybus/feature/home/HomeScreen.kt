@@ -106,7 +106,7 @@ fun LikeRoutesView(favoriteRoutes: List<FavoriteRoute>, openRoute: (String) -> U
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { openRoute(item.routeId) }
-                            .padding(8.dp),
+                            .padding(16.dp, 8.dp),
                         text = item.routeName,
                         style = MaterialTheme.typography.body1,
                     )

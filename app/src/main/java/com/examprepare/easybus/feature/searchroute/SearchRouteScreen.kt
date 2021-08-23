@@ -68,7 +68,7 @@ fun SearchBar(searchText: String, onSearchChange: (String) -> Unit) {
             value = searchText,
             onValueChange = onSearchChange,
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Default,
+                imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Text
             ),
             keyboardActions = KeyboardActions(
@@ -82,7 +82,6 @@ fun SearchBar(searchText: String, onSearchChange: (String) -> Unit) {
 fun RoutesView(favoriteRoutes: List<Route>, toRoute: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier
-            .background(MaterialTheme.colors.background)
             .fillMaxSize()
     ) {
         itemsIndexed(favoriteRoutes) { _, item ->
