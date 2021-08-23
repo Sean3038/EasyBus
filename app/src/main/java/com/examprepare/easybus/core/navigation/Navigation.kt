@@ -22,7 +22,7 @@ import com.examprepare.easybus.feature.searchroute.SearchRouteViewModel
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 
 @Composable
-fun EasyBusApp() {
+fun EasyBusApp(toSystemSetting: () -> Unit) {
     val navController = rememberNavController()
     val actions = remember(navController) { Actions(navController) }
     EasyBusTheme {
@@ -30,10 +30,10 @@ fun EasyBusApp() {
             composable(Home) {
                 val viewModel = hiltViewModel<HomeViewModel>()
                 HomeScreen(
-                    viewModel,
-                    actions.toSearchRoute,
-                    actions.toSearchNearStop,
-                    actions.toRoute
+                    viewModel = viewModel,
+                    toSearchRoute = actions.toSearchRoute,
+                    toSearchNearStop = actions.toSearchNearStop,
+                    openRoute = actions.toRoute
                 )
             }
             composable(Route) {
@@ -54,7 +54,10 @@ fun EasyBusApp() {
                 )
             }
             composable(SearchNearStop) {
-                SearchNearStopScreen()
+                SearchNearStopScreen(
+                    toSystemSettings = toSystemSetting,
+                    navigateBack = actions.navigateBack
+                )
             }
         }
     }
