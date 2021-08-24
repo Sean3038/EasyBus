@@ -10,6 +10,7 @@ import com.examprepare.easybus.core.interceptor.PtxRequestInterceptor
 import com.examprepare.easybus.core.platform.NetworkHandler
 import com.examprepare.easybus.core.repository.LikeRouteRepository
 import com.examprepare.easybus.core.repository.RouteRepository
+import com.examprepare.easybus.core.repository.SearchRouteRepository
 import com.examprepare.easybus.core.repository.StopRepository
 import com.examprepare.easybus.core.service.PTXApi
 import com.examprepare.easybus.core.service.PTXService
@@ -18,7 +19,6 @@ import com.examprepare.easybus.feature.route.domain.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.route.domain.usecase.GetRoute
 import com.examprepare.easybus.feature.route.domain.usecase.RemoveLikeRoute
 import com.examprepare.easybus.feature.searchnearstop.domain.usecase.GetNearStops
-import com.examprepare.easybus.feature.searchroute.domain.usecase.GetAllRoute
 import com.examprepare.easybus.feature.searchroute.domain.usecase.SearchRoute
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -110,11 +110,12 @@ object AppModule {
     @Provides
     @Singleton
     fun providerRouteRepository(
+        @PTXResourceCityArray resourceCityArray: Array<String>,
         ptxService: PTXService,
         ptxDataBase: PTXDataBase,
         networkHandler: NetworkHandler
     ): RouteRepository {
-        return RouteRepository.Impl(networkHandler, ptxService, ptxDataBase)
+        return RouteRepository.Impl(resourceCityArray, networkHandler, ptxService, ptxDataBase)
     }
 
     @Provides
@@ -127,20 +128,24 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providerSearchRouteRepository(
+        @PTXResourceCityArray resourceCityArray: Array<String>,
+        ptxService: PTXService,
+        networkHandler: NetworkHandler
+    ): SearchRouteRepository {
+        return SearchRouteRepository.Impl(resourceCityArray, networkHandler, ptxService)
+    }
+
+    @Provides
+    @Singleton
     fun providerGetRoute(routeRepository: RouteRepository): GetRoute {
         return GetRoute(routeRepository)
     }
 
     @Provides
     @Singleton
-    fun providerGetAllRoute(routeRepository: RouteRepository): GetAllRoute {
-        return GetAllRoute(routeRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providerSearchRoute(routeRepository: RouteRepository): SearchRoute {
-        return SearchRoute(routeRepository)
+    fun providerSearchRoute(searchRouteRepository: SearchRouteRepository): SearchRoute {
+        return SearchRoute(searchRouteRepository)
     }
 
     @Provides
@@ -172,4 +177,9 @@ object AppModule {
         return GetNearStops(stopRepository)
     }
 
+    @Provides
+    @PTXResourceCityArray
+    fun providerResourceCityArray(): Array<String> {
+        return arrayOf("NewTaipei", "Taipei")
+    }
 }

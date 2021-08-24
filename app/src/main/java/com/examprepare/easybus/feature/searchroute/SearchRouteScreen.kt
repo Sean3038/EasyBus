@@ -25,16 +25,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.examprepare.easybus.core.ui.TitleBar
-import com.examprepare.easybus.feature.searchroute.domain.model.Route
+import com.examprepare.easybus.feature.searchroute.domain.model.SearchRouteResult
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 
 @Composable
 fun SearchRouteScreen(viewModel: SearchRouteViewModel, toRoute: (String) -> Unit) {
     val searchRouteName = viewModel.searchRouteName.collectAsState().value
-    val routes = viewModel.routes.collectAsState().value
+    val items = viewModel.items.collectAsState().value
     SearchRoute(
         searchText = searchRouteName,
-        routes = routes,
+        routes = items,
         onSearchChange = viewModel::onSearchChange,
         toRoute = toRoute
     )
@@ -43,7 +43,7 @@ fun SearchRouteScreen(viewModel: SearchRouteViewModel, toRoute: (String) -> Unit
 @Composable
 fun SearchRoute(
     searchText: String,
-    routes: List<Route>,
+    routes: List<SearchRouteResult.Item>,
     onSearchChange: (String) -> Unit,
     toRoute: (String) -> Unit
 ) {
@@ -79,13 +79,13 @@ fun SearchBar(searchText: String, onSearchChange: (String) -> Unit) {
 }
 
 @Composable
-fun RoutesView(favoriteRoutes: List<Route>, toRoute: (String) -> Unit) {
+fun RoutesView(favoriteRoutes: List<SearchRouteResult.Item>, toRoute: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
         itemsIndexed(favoriteRoutes) { _, item ->
-            Box(modifier = Modifier.clickable { toRoute(item.routeId) }) {
+            Box(modifier = Modifier.clickable { toRoute(item.routeID) }) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -16,6 +16,7 @@ class GetFavoriteRoutes @Inject constructor(
 
 
     override suspend fun run(params: None): Either<Failure, List<FavoriteRoute>> {
+        val favoriteRoutes = mutableListOf<FavoriteRoute>()
         val likeRoutes = when (val result = likeRouteRepository.likesRoutes()) {
             is Either.Left -> {
                 return result
@@ -24,21 +25,19 @@ class GetFavoriteRoutes @Inject constructor(
                 result.b
             }
         }
-        val routesResult = when (val result = routeRepository.routes()) {
-            is Either.Left -> {
-                return result
+        for (likeItem in likeRoutes) {
+            val routesResult = when (val result = routeRepository.route(likeItem.routeId)) {
+                is Either.Left -> {
+                    return result
+                }
+                is Either.Right -> {
+                    result.b
+                }
             }
-            is Either.Right -> {
-                result.b
-            }
+            favoriteRoutes.add(FavoriteRoute(routesResult.routeId, routesResult.routeName, true))
         }
 
-        return Either.Right(routesResult
-            .filter { route ->
-                likeRoutes.any { it.routeId == route.routeId }
-            }.map {
-                FavoriteRoute(it.routeId, it.routeName, true)
-            })
+        return Either.Right(favoriteRoutes)
     }
 
 }

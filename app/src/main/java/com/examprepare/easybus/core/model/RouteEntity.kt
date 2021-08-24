@@ -80,6 +80,9 @@ interface RouteEntityDao {
     @Query("SELECT * FROM route_entities")
     suspend fun getAll(): List<RouteLocalEntity>
 
+    @Query("SELECT * FROM route_entities WHERE RouteID == :routeId")
+    suspend fun get(routeId: String): List<RouteLocalEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg routeLocalEntity: RouteLocalEntity)
 }
