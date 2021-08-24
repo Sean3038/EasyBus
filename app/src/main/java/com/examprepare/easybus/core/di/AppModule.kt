@@ -17,7 +17,7 @@ import com.examprepare.easybus.feature.home.domain.usecase.GetFavoriteRoutes
 import com.examprepare.easybus.feature.route.domain.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.route.domain.usecase.GetRoute
 import com.examprepare.easybus.feature.route.domain.usecase.RemoveLikeRoute
-import com.examprepare.easybus.feature.searchnearstop.domain.usecase.GetNearStop
+import com.examprepare.easybus.feature.searchnearstop.domain.usecase.GetNearStops
 import com.examprepare.easybus.feature.searchroute.domain.usecase.GetAllRoute
 import com.examprepare.easybus.feature.searchroute.domain.usecase.SearchRoute
 import com.google.gson.Gson
@@ -168,8 +168,8 @@ object AppModule {
     @Singleton
     fun providerGetNearStop(
         stopRepository: StopRepository,
-    ): GetNearStop {
-        return GetNearStop(stopRepository)
+    ): GetNearStops {
+        return GetNearStops(stopRepository)
     }
 
 }

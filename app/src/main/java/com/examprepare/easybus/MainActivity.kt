@@ -18,14 +18,19 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             EasyBusTheme {
-                EasyBusApp(toSystemSetting = {
-                    toSystemSetting()
-                })
+                EasyBusApp(
+                    toSystemSetting = { toSystemSetting() },
+                    toSystemLocationSetting = { toSystemLocationSetting() }
+                )
             }
         }
     }
 
-    fun toSystemSetting() {
+    private fun toSystemSetting() {
         startActivity(Intent(Settings.ACTION_SETTINGS))
+    }
+
+    private fun toSystemLocationSetting() {
+        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
     }
 }

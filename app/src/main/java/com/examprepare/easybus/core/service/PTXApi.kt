@@ -9,9 +9,9 @@ import retrofit2.http.Path
 interface PTXApi {
 
     companion object {
-        const val ROUTES = "v2/Bus/Route/City/NewTaipei/"
-        const val STOP = "v2/Bus/Stop/City/NewTaipei/"
-        const val DISPLAY_STOP_OF_ROUTE = "v2/Bus/DisplayStopOfRoute/City/NewTaipei/"
+        const val ROUTES = "v2/Bus/Route/City/Taipei/"
+        const val STOP = "v2/Bus/Stop/City/Taipei/"
+        const val DISPLAY_STOP_OF_ROUTE = "v2/Bus/DisplayStopOfRoute/City/Taipei/"
     }
 
     @GET("$ROUTES?\$format=JSON")

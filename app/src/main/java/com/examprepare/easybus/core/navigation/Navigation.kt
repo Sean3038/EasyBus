@@ -1,5 +1,6 @@
 package com.examprepare.easybus.core.navigation
 
+import SearchNearStopScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,13 +17,13 @@ import com.examprepare.easybus.feature.home.HomeScreen
 import com.examprepare.easybus.feature.home.HomeViewModel
 import com.examprepare.easybus.feature.route.RouteScreen
 import com.examprepare.easybus.feature.route.RouteViewModel
-import com.examprepare.easybus.feature.searchnearstop.SearchNearStopScreen
+import com.examprepare.easybus.feature.searchnearstop.SearchNearStopViewModel
 import com.examprepare.easybus.feature.searchroute.SearchRouteScreen
 import com.examprepare.easybus.feature.searchroute.SearchRouteViewModel
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 
 @Composable
-fun EasyBusApp(toSystemSetting: () -> Unit) {
+fun EasyBusApp(toSystemSetting: () -> Unit, toSystemLocationSetting: () -> Unit) {
     val navController = rememberNavController()
     val actions = remember(navController) { Actions(navController) }
     EasyBusTheme {
@@ -54,8 +55,11 @@ fun EasyBusApp(toSystemSetting: () -> Unit) {
                 )
             }
             composable(SearchNearStop) {
+                val viewModel = hiltViewModel<SearchNearStopViewModel>()
                 SearchNearStopScreen(
+                    viewModel = viewModel,
                     toSystemSettings = toSystemSetting,
+                    toSystemLocationSetting = toSystemLocationSetting,
                     navigateBack = actions.navigateBack
                 )
             }

@@ -8,8 +8,8 @@ import com.examprepare.easybus.feature.searchnearstop.domain.model.Stop
 import javax.inject.Inject
 
 
-class GetNearStop @Inject constructor(private val stopRepository: StopRepository) :
-    UseCase<List<Stop>, GetNearStop.Params>() {
+class GetNearStops @Inject constructor(private val stopRepository: StopRepository) :
+    UseCase<List<Stop>, GetNearStops.Params>() {
 
     override suspend fun run(params: Params): Either<Failure, List<Stop>> =
         stopRepository.findNearStop(params.lat, params.lon)

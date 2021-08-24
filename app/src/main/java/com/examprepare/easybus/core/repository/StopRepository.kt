@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 interface StopRepository {
     companion object {
-        const val NEAR_STOP_RADIUS_METERS = 100
+        const val NEAR_STOP_RADIUS_METERS = 500
     }
 
     suspend fun findNearStop(positionLat: Double, positionLon: Double): Either<Failure, List<Stop>>
@@ -39,7 +39,7 @@ interface StopRepository {
 
                         Either.Right(
                             stopEntity.filter {
-                                it.nearPosition(positionLat, positionLat)
+                                it.nearPosition(positionLat, positionLon)
                             }.map {
                                 it.toStop()
                             }
