@@ -26,8 +26,6 @@ import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
 
-@SuppressLint("MissingPermission")
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SearchNearStopScreen(
     viewModel: SearchNearStopViewModel,
@@ -35,29 +33,62 @@ fun SearchNearStopScreen(
     toSystemLocationSetting: () -> Unit,
     navigateBack: () -> Unit
 ) {
-    val locationPermissionState = rememberMultiplePermissionsState(
-        listOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_NETWORK_STATE
-        )
-    )
-    var location by remember { mutableStateOf<Location?>(null) }
+    val location = remember { mutableStateOf<Location?>(null) }
     val nearStops = viewModel.nearStops.collectAsState().value
 
-    PermissionsRequired(locationPermissionState,
-        permissionsNotGrantedContent = {
-            PermissionNotGrantedDialog(
-                permissionState = locationPermissionState,
-                navigateBack = navigateBack
-            )
-        },
-        permissionsNotAvailableContent = {
-            PermissionNotAvailableDialog(
-                toSystemSettings = toSystemSettings,
-                navigateBack = navigateBack
-            )
+    RequestLocation(
+        location = location,
+        toSystemSettings = toSystemSettings,
+        toSystemLocationSettings = toSystemLocationSetting,
+        navigateBack = navigateBack
+    )
+
+    LaunchedEffect(location.value) {
+        location.value?.let {
+            viewModel.searchNearStops(it.latitude, it.longitude)
         }
+    }
+
+    SearchNearStop(location = location.value, nearStops = nearStops)
+}
+
+@Composable
+fun SearchNearStop(location: Location?, nearStops: List<Stop>) {
+    Scaffold(topBar = { TitleBar() }) {
+        Column {
+            if (location != null) {
+                Text("目前位置 經度: ${location.latitude} 緯度：${location.longitude}")
+                Spacer(modifier = Modifier.height(10.dp))
+                LazyColumn {
+                    if (nearStops.isEmpty()) {
+                        item {
+                            Text("附近無公車站牌")
+                        }
+                    } else {
+                        itemsIndexed(nearStops) { _, item ->
+                            Text("${item.stopName} 經度：${item.positionLatitude} 緯度：${item.positionLongitude} ID:${item.stopId}")
+                        }
+                    }
+                }
+            } else {
+                Text("無法取得目前位置")
+            }
+        }
+    }
+}
+
+@SuppressLint("MissingPermission")
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RequestLocation(
+    location: MutableState<Location?>,
+    toSystemSettings: () -> Unit,
+    toSystemLocationSettings: () -> Unit,
+    navigateBack: () -> Unit
+) {
+    AskLocationPermission(
+        toSystemSettings = toSystemSettings,
+        navigateBack = navigateBack
     ) {
         val context = LocalContext.current
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -85,13 +116,13 @@ fun SearchNearStopScreen(
                     LocationServices.getFusedLocationProviderClient(context)
                 fusedLocationClient.lastLocation
                     .addOnSuccessListener {
-                        location = it
+                        location.value = it
                     }
 
                 //get location regularly
                 val locationListener = object : LocationListener {
                     override fun onLocationChanged(newLocation: Location) {
-                        location = newLocation
+                        location.value = newLocation
                     }
 
                     override fun onProviderEnabled(provider: String) {
@@ -100,7 +131,7 @@ fun SearchNearStopScreen(
 
                     override fun onProviderDisabled(provider: String) {
                         locationProvider = ""
-                        location = null
+                        location.value = null
                     }
                 }
 
@@ -116,43 +147,43 @@ fun SearchNearStopScreen(
             }
         } else {
             LocationNotAvailableDialog(
-                toSystemLocationSettings = toSystemLocationSetting,
+                toSystemLocationSettings = toSystemLocationSettings,
                 navigateBack = navigateBack
             )
         }
     }
-
-    LaunchedEffect(location) {
-        location?.let {
-            viewModel.searchNearStops(it.latitude, it.longitude)
-        }
-    }
-
-    SearchNearStop(location = location, nearStops = nearStops)
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SearchNearStop(location: Location?, nearStops: List<Stop>) {
-    Scaffold(topBar = { TitleBar() }) {
-        Column {
-            if (location != null) {
-                Text("目前位置 經度: ${location.latitude} 緯度：${location.longitude}")
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyColumn {
-                    if (nearStops.isEmpty()) {
-                        item {
-                            Text("附近無公車站牌")
-                        }
-                    } else {
-                        itemsIndexed(nearStops) { _, item ->
-                            Text("${item.stopName} 經度：${item.positionLatitude} 緯度：${item.positionLongitude} ID:${item.stopId}")
-                        }
-                    }
-                }
-            } else {
-                Text("無法取得目前位置")
-            }
+fun AskLocationPermission(
+    toSystemSettings: () -> Unit,
+    navigateBack: () -> Unit,
+    onGrantAll: @Composable () -> Unit
+) {
+    val locationPermissionState = rememberMultiplePermissionsState(
+        listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_NETWORK_STATE
+        )
+    )
+
+    PermissionsRequired(locationPermissionState,
+        permissionsNotGrantedContent = {
+            PermissionNotGrantedDialog(
+                permissionState = locationPermissionState,
+                navigateBack = navigateBack
+            )
+        },
+        permissionsNotAvailableContent = {
+            PermissionNotAvailableDialog(
+                toSystemSettings = toSystemSettings,
+                navigateBack = navigateBack
+            )
         }
+    ) {
+        onGrantAll()
     }
 }
 
