@@ -1,14 +1,13 @@
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
@@ -17,7 +16,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.examprepare.easybus.core.ui.TitleBar
+import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
 import com.examprepare.easybus.feature.searchnearstop.SearchNearStopViewModel
 import com.examprepare.easybus.feature.searchnearstop.domain.model.Stop
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -25,6 +26,14 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.ktx.awaitMap
+import kotlinx.coroutines.launch
+
 
 @Composable
 fun SearchNearStopScreen(
@@ -59,15 +68,41 @@ fun SearchNearStop(location: Location?, nearStops: List<Stop>) {
             if (location != null) {
                 Text("目前位置 經度: ${location.latitude} 緯度：${location.longitude}")
                 Spacer(modifier = Modifier.height(10.dp))
-                LazyColumn {
-                    if (nearStops.isEmpty()) {
-                        item {
-                            Text("附近無公車站牌")
+
+                val scope = rememberCoroutineScope()
+                val mapView = rememberMapViewWithLifecycle()
+
+                AndroidView(factory = { mapView }) {
+                    scope.launch {
+                        val map = mapView.awaitMap()
+                        map.clear()
+
+                        val destination = LatLng(location.latitude, location.longitude)
+
+                        val markerOptions = MarkerOptions()
+                            .title("目前位置")
+                            .position(destination)
+                        map.addMarker(markerOptions)
+
+                        map.addCircle(
+                            CircleOptions()
+                                .center(LatLng(location.latitude, location.longitude))
+                                .radius(500.0)
+                                .strokeWidth(2f)
+                                .strokeColor(Color.CYAN)
+                                .fillColor(Color.argb(64, 0, 0, 255))
+                        )
+
+                        nearStops.forEach {
+                            val stopPosition = LatLng(it.positionLatitude, it.positionLongitude)
+                            val markPosition = MarkerOptions()
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                                .title(it.stopName)
+                                .position(stopPosition)
+                            map.addMarker(markPosition)
                         }
-                    } else {
-                        itemsIndexed(nearStops) { _, item ->
-                            Text("${item.stopName} 經度：${item.positionLatitude} 緯度：${item.positionLongitude} ID:${item.stopId}")
-                        }
+
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, 15f))
                     }
                 }
             } else {
