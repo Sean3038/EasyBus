@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
+import com.examprepare.easybus.feature.model.Station
 import com.examprepare.easybus.feature.searchnearstop.SearchNearStopViewModel
-import com.examprepare.easybus.feature.model.Stop
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionsRequired
@@ -43,7 +43,7 @@ fun SearchNearStopScreen(
     navigateBack: () -> Unit
 ) {
     val location = remember { mutableStateOf<Location?>(null) }
-    val nearStops = viewModel.nearStops.collectAsState().value
+    val nearStations = viewModel.nearStations.collectAsState().value
 
     RequestLocation(
         location = location,
@@ -58,11 +58,11 @@ fun SearchNearStopScreen(
         }
     }
 
-    SearchNearStop(location = location.value, nearStops = nearStops)
+    SearchNearStop(location = location.value, nearStations = nearStations)
 }
 
 @Composable
-fun SearchNearStop(location: Location?, nearStops: List<Stop>) {
+fun SearchNearStop(location: Location?, nearStations: List<Station>) {
     Scaffold(topBar = { TitleBar() }) {
         Column {
             if (location != null) {
@@ -93,11 +93,11 @@ fun SearchNearStop(location: Location?, nearStops: List<Stop>) {
                                 .fillColor(Color.argb(64, 0, 0, 255))
                         )
 
-                        nearStops.forEach {
-                            val stopPosition = LatLng(it.positionLatitude, it.positionLongitude)
+                        nearStations.forEach {
+                            val stopPosition = LatLng(it.positionLat, it.positionLon)
                             val markPosition = MarkerOptions()
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
-                                .title(it.stopName)
+                                .title(it.stationName)
                                 .position(stopPosition)
                             map.addMarker(markPosition)
                         }

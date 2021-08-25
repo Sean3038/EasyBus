@@ -8,16 +8,14 @@ import com.examprepare.easybus.core.database.PersonalDataBase
 import com.examprepare.easybus.core.interceptor.NetworkInterceptor
 import com.examprepare.easybus.core.interceptor.PtxRequestInterceptor
 import com.examprepare.easybus.core.platform.NetworkHandler
-import com.examprepare.easybus.feature.repository.LikeRouteRepository
-import com.examprepare.easybus.feature.repository.RouteRepository
-import com.examprepare.easybus.feature.repository.SearchRouteRepository
-import com.examprepare.easybus.feature.repository.StopRepository
 import com.examprepare.easybus.core.service.PTXApi
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.home.domain.usecase.GetFavoriteRoutes
+import com.examprepare.easybus.feature.repository.*
 import com.examprepare.easybus.feature.routedetail.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.routedetail.usecase.GetRoute
 import com.examprepare.easybus.feature.routedetail.usecase.RemoveLikeRoute
+import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStation
 import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStops
 import com.examprepare.easybus.feature.searchroute.usecase.SearchRoute
 import com.google.gson.Gson
@@ -120,6 +118,17 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providerStationRepository(
+        @PTXResourceCityArray resourceCityArray: Array<String>,
+        ptxService: PTXService,
+        ptxDataBase: PTXDataBase,
+        networkHandler: NetworkHandler
+    ): StationRepository {
+        return StationRepository.Impl(resourceCityArray, networkHandler, ptxService, ptxDataBase)
+    }
+
+    @Provides
+    @Singleton
     fun providerLikeRouteRepository(
         personalDataBase: PersonalDataBase
     ): LikeRouteRepository {
@@ -176,6 +185,15 @@ object AppModule {
     ): GetNearStops {
         return GetNearStops(stopRepository)
     }
+
+    @Provides
+    @Singleton
+    fun providerGetNearStation(
+        stationRepository: StationRepository,
+    ): GetNearStation {
+        return GetNearStation(stationRepository)
+    }
+
 
     @Provides
     @PTXResourceCityArray

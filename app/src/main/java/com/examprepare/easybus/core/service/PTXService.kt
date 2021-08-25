@@ -1,7 +1,8 @@
 package com.examprepare.easybus.core.service
 
 import com.examprepare.easybus.core.model.network.RouteNetworkEntity
-import com.examprepare.easybus.core.model.network.SearchRouteEntity
+import com.examprepare.easybus.core.model.network.SearchRouteNetworkEntity
+import com.examprepare.easybus.core.model.network.StationNetworkEntity
 
 class PTXService(private val api: PTXApi) {
 
@@ -14,9 +15,13 @@ class PTXService(private val api: PTXApi) {
         return api.getRoutes(city, filter).firstOrNull()
     }
 
-    suspend fun searchRoute(city: String, keyword: String): List<SearchRouteEntity> {
+    suspend fun searchRoute(city: String, keyword: String): List<SearchRouteNetworkEntity> {
         val filter = "contains(RouteName/Zh_tw, '$keyword' ) or contains(RouteName/En, '$keyword' )"
         return api.searchRoute(city, filter)
+    }
+
+    suspend fun getStations(city: String): List<StationNetworkEntity> {
+        return api.getStations(city, null)
     }
 
     suspend fun getStops() = api.getStops()

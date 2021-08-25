@@ -38,9 +38,9 @@ data class StationPosition(
     @SerializedName("GeoHash")
     val geoHash: String,
     @SerializedName("PositionLat")
-    val positionLat: Int,
+    val positionLat: Double,
     @SerializedName("PositionLon")
-    val positionLon: Int
+    val positionLon: Double
 )
 
 data class Stop(

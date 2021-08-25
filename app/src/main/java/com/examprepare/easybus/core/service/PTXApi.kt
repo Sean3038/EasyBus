@@ -1,9 +1,6 @@
 package com.examprepare.easybus.core.service
 
-import com.examprepare.easybus.core.model.network.DisplayStopOfRouteEntity
-import com.examprepare.easybus.core.model.network.RouteNetworkEntity
-import com.examprepare.easybus.core.model.network.SearchRouteEntity
-import com.examprepare.easybus.core.model.network.StopNetworkEntity
+import com.examprepare.easybus.core.model.network.*
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -13,6 +10,7 @@ interface PTXApi {
     companion object {
         const val ROUTES = "v2/Bus/Route/City"
         const val STOP = "v2/Bus/Stop/City"
+        const val STATION = "v2/Bus/Station/City"
         const val DISPLAY_STOP_OF_ROUTE = "v2/Bus/DisplayStopOfRoute/City/Taipei/"
     }
 
@@ -34,9 +32,16 @@ interface PTXApi {
     @GET("$ROUTES/{City}?\$select=RouteID, RouteName")
     suspend fun searchRoute(
         @Path("City") city: String,
-        @Query("\$filter") filter: String,
+        @Query("\$filter") filter: String?,
         @Query("\$format") format: String = "JSON"
-    ): List<SearchRouteEntity>
+    ): List<SearchRouteNetworkEntity>
+
+    @GET("$STATION/{City}")
+    suspend fun getStations(
+        @Path("City") city: String,
+        @Query("\$filter") filter: String?,
+        @Query("\$format") format: String = "JSON"
+    ): List<StationNetworkEntity>
 
     @GET("$STOP?\$format=JSON")
     suspend fun getStops(): List<StopNetworkEntity>

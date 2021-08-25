@@ -13,5 +13,5 @@ interface StationEntityDao {
     suspend fun getAll(): List<StationLocalEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg routeLocalEntity: StationLocalEntity)
+    suspend fun insertAll(vararg stationLocalEntity: StationLocalEntity)
 }

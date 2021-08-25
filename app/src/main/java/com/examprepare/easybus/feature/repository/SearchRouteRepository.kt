@@ -3,7 +3,7 @@ package com.examprepare.easybus.feature.repository
 import com.examprepare.easybus.core.di.PTXResourceCityArray
 import com.examprepare.easybus.core.exception.Failure
 import com.examprepare.easybus.core.functional.Either
-import com.examprepare.easybus.core.model.network.SearchRouteEntity
+import com.examprepare.easybus.core.model.network.SearchRouteNetworkEntity
 import com.examprepare.easybus.core.platform.NetworkHandler
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.model.SearchRouteResult
@@ -23,7 +23,7 @@ interface SearchRouteRepository {
                 when (networkHandler.isNetworkAvailable()) {
                     true -> {
 
-                        val resultEntity = mutableListOf<SearchRouteEntity>()
+                        val resultEntity = mutableListOf<SearchRouteNetworkEntity>()
                         for (city in resourceCityArray) {
                             resultEntity.addAll(service.searchRoute(city, keyword))
                         }
