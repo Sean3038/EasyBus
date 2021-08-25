@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.examprepare.easybus.Const
 import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
 import com.examprepare.easybus.feature.model.Station
@@ -172,7 +173,7 @@ fun RequestLocation(
 
                 locationManager.requestLocationUpdates(
                     locationProvider,
-                    0,
+                    Const.GET_NEAR_STATION_INTERVAL_MILLISECONDS,
                     0f,
                     locationListener
                 )
