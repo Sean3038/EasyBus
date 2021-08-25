@@ -12,7 +12,9 @@ import com.examprepare.easybus.feature.model.Station
 import timber.log.Timber
 
 interface StationRepository {
+
     suspend fun findNearStation(
+        radius: Int,
         positionLat: Double,
         positionLon: Double
     ): Either<Failure, List<Station>>
@@ -25,6 +27,7 @@ interface StationRepository {
     ) : StationRepository {
 
         override suspend fun findNearStation(
+            radius: Int,
             positionLat: Double,
             positionLon: Double
         ): Either<Failure, List<Station>> {
@@ -37,7 +40,7 @@ interface StationRepository {
 
                         Either.Right(
                             stationEntities.filter {
-                                it.nearPosition(positionLat, positionLon)
+                                it.nearPosition(radius, positionLat, positionLon)
                             }.map {
                                 it.toStation()
                             }
@@ -70,12 +73,13 @@ interface StationRepository {
         }
 
         private fun StationLocalEntity.nearPosition(
+            radius: Int,
             targetLat: Double,
             targetLon: Double
         ): Boolean {
             val result = FloatArray(3)
             Location.distanceBetween(positionLat, positionLon, targetLat, targetLon, result)
-            return result[0] < StopRepository.NEAR_STOP_RADIUS_METERS
+            return result[0] < radius
         }
     }
 }

@@ -18,10 +18,11 @@ class SearchNearStopViewModel @Inject constructor(
     private val _nearStations: MutableStateFlow<List<Station>> = MutableStateFlow(emptyList())
     val nearStations = _nearStations.asStateFlow()
 
-    fun searchNearStops(currentLatitude: Double, currentLongitude: Double) {
+    fun searchNearStops(radius: Int, currentLatitude: Double, currentLongitude: Double) {
         viewModelScope.launch {
-            getNearStation.run(GetNearStation.Params(currentLatitude, currentLongitude))
-                .fold(::handleFailure, ::handleGetNearStops)
+            getNearStation(GetNearStation.Params(radius, currentLatitude, currentLongitude)) {
+                it.fold(::handleFailure, ::handleGetNearStops)
+            }
         }
     }
 

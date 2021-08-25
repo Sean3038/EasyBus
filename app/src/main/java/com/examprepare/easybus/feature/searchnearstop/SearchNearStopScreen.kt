@@ -6,8 +6,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
@@ -55,7 +55,11 @@ fun SearchNearStopScreen(
 
     LaunchedEffect(location.value) {
         location.value?.let {
-            viewModel.searchNearStops(it.latitude, it.longitude)
+            viewModel.searchNearStops(
+                Const.GET_NEAR_STATION_RADIUS_METERS,
+                it.latitude,
+                it.longitude
+            )
         }
     }
 
@@ -66,9 +70,13 @@ fun SearchNearStopScreen(
 fun SearchNearStop(location: Location?, nearStations: List<Station>) {
     Scaffold(topBar = { TitleBar() }) {
         Column {
-            if (location != null) {
-                Text("目前位置 經度: ${location.latitude} 緯度：${location.longitude}")
-                Spacer(modifier = Modifier.height(10.dp))
+            if (location != null && nearStations.isNotEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(16.dp),
+                    text = "搜尋附近${Const.GET_NEAR_STATION_RADIUS_METERS}公尺內站牌，每${Const.GET_NEAR_STATION_INTERVAL_MILLISECONDS / 60000}分鐘更新"
+                )
 
                 val scope = rememberCoroutineScope()
                 val mapView = rememberMapViewWithLifecycle()

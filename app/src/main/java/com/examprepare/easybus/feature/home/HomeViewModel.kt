@@ -21,7 +21,9 @@ class HomeViewModel @Inject constructor(
 
     fun getFavoriteRoutes() {
         viewModelScope.launch {
-            getFavoriteRoutes.run(UseCase.None()).fold(::handleFailure, ::handleGetFavoriteRoutes)
+            getFavoriteRoutes(UseCase.None()) {
+                it.fold(::handleFailure, ::handleGetFavoriteRoutes)
+            }
         }
     }
 

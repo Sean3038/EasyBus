@@ -23,15 +23,18 @@ class SearchRouteViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            searchRoute.run(SearchRoute.Params("")).fold(::handleFailure, ::handleGetSearchResult)
+            searchRoute(SearchRoute.Params("")) {
+                it.fold(::handleFailure, ::handleGetSearchResult)
+            }
         }
     }
 
     fun onSearchChange(searchRouteName: String) {
         viewModelScope.launch {
             _searchRouteName.value = searchRouteName
-            searchRoute.run(SearchRoute.Params(searchRouteName))
-                .fold(::handleFailure, ::handleGetSearchResult)
+            searchRoute(SearchRoute.Params(searchRouteName)) {
+                it.fold(::handleFailure, ::handleGetSearchResult)
+            }
         }
     }
 

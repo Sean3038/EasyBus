@@ -2,11 +2,11 @@ package com.examprepare.easybus.feature.routedetail
 
 import androidx.lifecycle.viewModelScope
 import com.examprepare.easybus.core.platform.BaseViewModel
+import com.examprepare.easybus.feature.model.Route
 import com.examprepare.easybus.feature.routedetail.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.routedetail.usecase.GetRoute
 import com.examprepare.easybus.feature.routedetail.usecase.IsLikeRoute
 import com.examprepare.easybus.feature.routedetail.usecase.RemoveLikeRoute
-import com.examprepare.easybus.feature.model.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,28 +29,33 @@ class RouteDetailViewModel @Inject constructor(
 
     fun getRoute(routeId: String) {
         viewModelScope.launch {
-            getRoute.run(GetRoute.Params(routeId = routeId))
-                .fold(::handleFailure, ::handleGetRoute)
-            isLikeRoute.run(IsLikeRoute.Params(routeId = routeId))
-                .fold(::handleFailure, ::handleIsLikeRoute)
+            getRoute(GetRoute.Params(routeId = routeId)) {
+                it.fold(::handleFailure, ::handleGetRoute)
+            }
+
+            isLikeRoute(IsLikeRoute.Params(routeId = routeId)) {
+                it.fold(::handleFailure, ::handleIsLikeRoute)
+            }
         }
     }
 
     fun addLikeRoute(routeId: String) {
         viewModelScope.launch {
-            addLikeRoute.run(AddLikeRoute.Params(routeId = routeId))
-                .fold(::handleFailure) {
+            addLikeRoute(AddLikeRoute.Params(routeId = routeId)) {
+                it.fold(::handleFailure) {
                     handleAddLikeRoute()
                 }
+            }
         }
     }
 
     fun removeLikeRoute(routeId: String) {
         viewModelScope.launch {
-            removeLikeRoute.run(RemoveLikeRoute.Params(routeId = routeId))
-                .fold(::handleFailure) {
+            removeLikeRoute(RemoveLikeRoute.Params(routeId = routeId)) {
+                it.fold(::handleFailure) {
                     handleRemoveLikeRoute()
                 }
+            }
         }
     }
 
