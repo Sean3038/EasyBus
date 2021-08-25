@@ -1,9 +1,9 @@
 package com.examprepare.easybus.core.service
 
-import com.examprepare.easybus.core.model.DisplayStopOfRouteEntity
-import com.examprepare.easybus.core.model.RouteNetworkEntity
-import com.examprepare.easybus.core.model.SearchRouteEntity
-import com.examprepare.easybus.core.model.StopNetworkEntity
+import com.examprepare.easybus.core.model.network.DisplayStopOfRouteEntity
+import com.examprepare.easybus.core.model.network.RouteNetworkEntity
+import com.examprepare.easybus.core.model.network.SearchRouteEntity
+import com.examprepare.easybus.core.model.network.StopNetworkEntity
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

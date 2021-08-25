@@ -3,8 +3,8 @@ package com.examprepare.easybus.feature.home.domain.usecase
 import com.examprepare.easybus.core.exception.Failure
 import com.examprepare.easybus.core.functional.Either
 import com.examprepare.easybus.core.interactor.UseCase
-import com.examprepare.easybus.core.repository.LikeRouteRepository
-import com.examprepare.easybus.core.repository.RouteRepository
+import com.examprepare.easybus.feature.repository.LikeRouteRepository
+import com.examprepare.easybus.feature.repository.RouteRepository
 import com.examprepare.easybus.feature.home.domain.model.FavoriteRoute
 import javax.inject.Inject
 

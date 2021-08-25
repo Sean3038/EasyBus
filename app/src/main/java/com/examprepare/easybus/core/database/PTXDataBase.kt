@@ -2,12 +2,13 @@ package com.examprepare.easybus.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.examprepare.easybus.core.model.RouteEntityDao
-import com.examprepare.easybus.core.model.RouteLocalEntity
-import com.examprepare.easybus.core.model.StopEntityDao
-import com.examprepare.easybus.core.model.StopLocalEntity
+import com.examprepare.easybus.core.database.dao.RouteEntityDao
+import com.examprepare.easybus.core.database.dao.StopEntityDao
+import com.examprepare.easybus.core.model.local.RouteLocalEntity
+import com.examprepare.easybus.core.model.local.StopLocalEntity
 
-@Database(entities = [RouteLocalEntity::class, StopLocalEntity::class], version = 1)
+
+@Database(entities = [RouteLocalEntity::class, StopLocalEntity::class], version = 1, exportSchema = false)
 abstract class PTXDataBase : RoomDatabase() {
 
     companion object {

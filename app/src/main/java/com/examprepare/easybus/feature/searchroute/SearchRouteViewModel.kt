@@ -2,8 +2,8 @@ package com.examprepare.easybus.feature.searchroute
 
 import androidx.lifecycle.viewModelScope
 import com.examprepare.easybus.core.platform.BaseViewModel
-import com.examprepare.easybus.feature.searchroute.domain.model.SearchRouteResult
-import com.examprepare.easybus.feature.searchroute.domain.usecase.SearchRoute
+import com.examprepare.easybus.feature.model.SearchRouteResult
+import com.examprepare.easybus.feature.searchroute.usecase.SearchRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

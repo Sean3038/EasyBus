@@ -20,7 +20,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
 import com.examprepare.easybus.feature.searchnearstop.SearchNearStopViewModel
-import com.examprepare.easybus.feature.searchnearstop.domain.model.Stop
+import com.examprepare.easybus.feature.model.Stop
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionsRequired

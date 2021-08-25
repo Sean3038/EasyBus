@@ -2,8 +2,8 @@ package com.examprepare.easybus.feature.searchnearstop
 
 import androidx.lifecycle.viewModelScope
 import com.examprepare.easybus.core.platform.BaseViewModel
-import com.examprepare.easybus.feature.searchnearstop.domain.model.Stop
-import com.examprepare.easybus.feature.searchnearstop.domain.usecase.GetNearStops
+import com.examprepare.easybus.feature.model.Stop
+import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStops
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.examprepare.easybus.core.ui.TitleBar
-import com.examprepare.easybus.feature.searchroute.domain.model.SearchRouteResult
+import com.examprepare.easybus.feature.model.SearchRouteResult
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 
 @Composable

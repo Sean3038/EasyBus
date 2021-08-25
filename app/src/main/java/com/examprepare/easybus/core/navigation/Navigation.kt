@@ -15,8 +15,8 @@ import com.examprepare.easybus.core.navigation.Destinations.Route
 import com.examprepare.easybus.core.navigation.Destinations.SearchNearStop
 import com.examprepare.easybus.feature.home.HomeScreen
 import com.examprepare.easybus.feature.home.HomeViewModel
-import com.examprepare.easybus.feature.route.RouteScreen
-import com.examprepare.easybus.feature.route.RouteViewModel
+import com.examprepare.easybus.feature.routedetail.RouteScreen
+import com.examprepare.easybus.feature.routedetail.RouteDetailViewModel
 import com.examprepare.easybus.feature.searchnearstop.SearchNearStopViewModel
 import com.examprepare.easybus.feature.searchroute.SearchRouteScreen
 import com.examprepare.easybus.feature.searchroute.SearchRouteViewModel
@@ -47,7 +47,7 @@ fun EasyBusApp(toSystemSetting: () -> Unit, toSystemLocationSetting: () -> Unit)
                     type = NavType.StringType
                 })
             ) {
-                val viewModel = hiltViewModel<RouteViewModel>()
+                val viewModel = hiltViewModel<RouteDetailViewModel>()
                 RouteScreen(
                     viewModel = viewModel,
                     routeName = it.arguments?.getString(Destinations.RouteArgs.RouteName) ?: "",
