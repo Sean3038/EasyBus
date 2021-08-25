@@ -18,6 +18,7 @@ interface SearchRouteRepository {
         private val networkHandler: NetworkHandler,
         private val service: PTXService
     ) : SearchRouteRepository {
+
         override suspend fun searchRoute(keyword: String): Either<Failure, SearchRouteResult> {
             return try {
                 when (networkHandler.isNetworkAvailable()) {

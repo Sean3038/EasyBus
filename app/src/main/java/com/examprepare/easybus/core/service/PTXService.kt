@@ -30,8 +30,9 @@ class PTXService(private val api: PTXApi) {
         return api.getStations(city, null, spatialFilter)
     }
 
-    suspend fun getStations(city: String): List<StationNetworkEntity> {
-        return api.getStations(city, null, null)
+    suspend fun getStations(city: String, stationId: String): List<StationNetworkEntity> {
+        val filter = "StationID eq $stationId"
+        return api.getStations(city, filter, null)
     }
 
     suspend fun getStops() = api.getStops()

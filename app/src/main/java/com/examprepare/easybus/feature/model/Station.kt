@@ -9,6 +9,10 @@ data class Station(
     val stopItems: List<StopItem>,
     val routeItems: List<RouteItem>
 ) {
+    companion object {
+        val empty = Station("", "", "", 0.0, 0.0, emptyList(), emptyList())
+    }
+
     data class StopItem(val stopId: String, val stopName: String)
     data class RouteItem(val routeId: String, val routeName: String)
 }

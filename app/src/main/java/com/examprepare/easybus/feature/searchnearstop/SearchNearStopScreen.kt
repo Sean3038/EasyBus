@@ -47,6 +47,7 @@ fun SearchNearStopScreen(
     viewModel: SearchNearStopViewModel,
     toSystemSettings: () -> Unit,
     toSystemLocationSetting: () -> Unit,
+    toStation: (String) -> Unit,
     navigateBack: () -> Unit
 ) {
     val location = remember { mutableStateOf<Location?>(null) }
