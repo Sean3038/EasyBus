@@ -22,7 +22,6 @@ interface SearchRouteRepository {
             return try {
                 when (networkHandler.isNetworkAvailable()) {
                     true -> {
-
                         val resultEntity = mutableListOf<SearchRouteNetworkEntity>()
                         for (city in resourceCityArray) {
                             resultEntity.addAll(service.searchRoute(city, keyword))

@@ -7,11 +7,14 @@ import com.examprepare.easybus.feature.model.Station
 import com.examprepare.easybus.feature.repository.StationRepository
 import javax.inject.Inject
 
-class GetNearStation @Inject constructor(private val stationRepository: StationRepository) :
-    UseCase<List<Station>, GetNearStation.Params>() {
+class GetNearStation @Inject constructor(
+    private val stationRepository: StationRepository
+) : UseCase<List<Station>, GetNearStation.Params>() {
 
     override suspend fun run(params: Params): Either<Failure, List<Station>> =
-        stationRepository.findNearStation(params.radius, params.lat, params.lon)
+        stationRepository.findNearStation(
+            params.radius, params.lat, params.lon
+        )
 
     data class Params(val radius: Int, val lat: Double, val lon: Double)
 }

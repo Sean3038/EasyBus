@@ -40,6 +40,7 @@ interface PTXApi {
     suspend fun getStations(
         @Path("City") city: String,
         @Query("\$filter") filter: String?,
+        @Query("\$spatialFilter") spatialFilter: String?,
         @Query("\$format") format: String = "JSON"
     ): List<StationNetworkEntity>
 

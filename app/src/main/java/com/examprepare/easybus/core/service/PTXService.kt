@@ -20,8 +20,18 @@ class PTXService(private val api: PTXApi) {
         return api.searchRoute(city, filter)
     }
 
+    suspend fun findNearStation(
+        city: String,
+        lat: Double,
+        lon: Double,
+        distance: Int
+    ): List<StationNetworkEntity> {
+        val spatialFilter = "nearby($lat,$lon,$distance)"
+        return api.getStations(city, null, spatialFilter)
+    }
+
     suspend fun getStations(city: String): List<StationNetworkEntity> {
-        return api.getStations(city, null)
+        return api.getStations(city, null, null)
     }
 
     suspend fun getStops() = api.getStops()

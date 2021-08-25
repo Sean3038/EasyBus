@@ -1,6 +1,6 @@
 package com.examprepare.easybus.core.navigation
 
-import SearchNearStopScreen
+import com.examprepare.easybus.feature.searchnearstop.SearchNearStopScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel

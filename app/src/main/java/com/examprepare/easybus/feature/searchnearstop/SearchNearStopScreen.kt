@@ -1,3 +1,5 @@
+package com.examprepare.easybus.feature.searchnearstop
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -5,6 +7,10 @@ import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -17,21 +23,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.examprepare.easybus.Const
+import com.examprepare.easybus.R
 import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
 import com.examprepare.easybus.feature.model.Station
-import com.examprepare.easybus.feature.searchnearstop.SearchNearStopViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionsRequired
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CircleOptions
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.ktx.awaitMap
 import kotlinx.coroutines.launch
 
@@ -78,6 +84,7 @@ fun SearchNearStop(location: Location?, nearStations: List<Station>) {
                     text = "搜尋附近${Const.GET_NEAR_STATION_RADIUS_METERS}公尺內站牌，每${Const.GET_NEAR_STATION_INTERVAL_MILLISECONDS / 60000}分鐘更新"
                 )
 
+                val context = LocalContext.current
                 val scope = rememberCoroutineScope()
                 val mapView = rememberMapViewWithLifecycle()
 
@@ -91,23 +98,24 @@ fun SearchNearStop(location: Location?, nearStations: List<Station>) {
                         val markerOptions = MarkerOptions()
                             .title("目前位置")
                             .position(destination)
-                        map.addMarker(markerOptions)
 
+                        map.setInfoWindowAdapter(StationInfoAdapter(context, nearStations))
                         map.addCircle(
                             CircleOptions()
                                 .center(LatLng(location.latitude, location.longitude))
-                                .radius(500.0)
+                                .radius(Const.GET_NEAR_STATION_RADIUS_METERS.toDouble())
                                 .strokeWidth(2f)
                                 .strokeColor(Color.CYAN)
                                 .fillColor(Color.argb(64, 0, 0, 255))
                         )
-
-                        nearStations.forEach {
-                            val stopPosition = LatLng(it.positionLat, it.positionLon)
+                        map.addMarker(markerOptions)
+                        nearStations.forEachIndexed { index, station ->
+                            val stopPosition = LatLng(station.positionLat, station.positionLon)
                             val markPosition = MarkerOptions()
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
-                                .title(it.stationName)
+                                .title(station.stationName)
                                 .position(stopPosition)
+                                .snippet(index.toString())
                             map.addMarker(markPosition)
                         }
 
@@ -302,4 +310,53 @@ fun PermissionNotGrantedDialog(
         },
         onDismissRequest = { navigateBack() }
     )
+}
+
+class StationInfoAdapter constructor(
+    private val context: Context,
+    private val stations: List<Station>
+) :
+    GoogleMap.InfoWindowAdapter {
+
+    private val stationInfoView: View =
+        LayoutInflater.from(context).inflate(R.layout.layout_mark_info, null)
+
+    override fun getInfoWindow(p0: Marker): View? = null
+
+    override fun getInfoContents(p0: Marker): View? {
+        val index = p0.snippet?.toInt()
+        index?.let {
+            val station: Station = stations[index]
+            val textStationTitle = stationInfoView.findViewById<TextView>(R.id.textStationTitle)
+            val textStationAddress = stationInfoView.findViewById<TextView>(R.id.textStationAddress)
+            val listRouts = stationInfoView.findViewById<RecyclerView>(R.id.listRoutes)
+            textStationTitle.text = station.stationName
+            textStationAddress.text = station.stationAddress
+            listRouts.layoutManager = GridLayoutManager(context, 3)
+            listRouts.adapter = RouteNameAdapter(context, station.routeItems)
+            return stationInfoView
+        }
+        return null
+    }
+}
+
+class RouteNameAdapter(
+    private val context: Context,
+    private val routeItems: List<Station.RouteItem>
+) :
+    RecyclerView.Adapter<RouteNameAdapter.RouteViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RouteViewHolder =
+        RouteViewHolder(LayoutInflater.from(context).inflate(R.layout.item_route, parent, false))
+
+    override fun onBindViewHolder(holder: RouteViewHolder, position: Int) {
+        val item = routeItems[position]
+        holder.textRouteName.text = item.routeName
+    }
+
+    override fun getItemCount(): Int = routeItems.size
+
+    class RouteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val textRouteName: TextView = itemView.findViewById(R.id.textRouteName)
+    }
 }

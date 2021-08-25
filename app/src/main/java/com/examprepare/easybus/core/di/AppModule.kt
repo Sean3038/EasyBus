@@ -16,7 +16,6 @@ import com.examprepare.easybus.feature.routedetail.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.routedetail.usecase.GetRoute
 import com.examprepare.easybus.feature.routedetail.usecase.RemoveLikeRoute
 import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStation
-import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStops
 import com.examprepare.easybus.feature.searchroute.usecase.SearchRoute
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -121,10 +120,9 @@ object AppModule {
     fun providerStationRepository(
         @PTXResourceCityArray resourceCityArray: Array<String>,
         ptxService: PTXService,
-        ptxDataBase: PTXDataBase,
         networkHandler: NetworkHandler
     ): StationRepository {
-        return StationRepository.Impl(resourceCityArray, networkHandler, ptxService, ptxDataBase)
+        return StationRepository.Impl(resourceCityArray, networkHandler, ptxService)
     }
 
     @Provides
@@ -176,14 +174,6 @@ object AppModule {
         routeRepository: RouteRepository
     ): GetFavoriteRoutes {
         return GetFavoriteRoutes(likeRouteRepository, routeRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providerGetNearStop(
-        stopRepository: StopRepository,
-    ): GetNearStops {
-        return GetNearStops(stopRepository)
     }
 
     @Provides

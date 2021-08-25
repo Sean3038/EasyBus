@@ -1,5 +1,6 @@
 package com.examprepare.easybus.core.model.network
 
+import com.examprepare.easybus.feature.model.Station
 import com.google.gson.annotations.SerializedName
 
 data class StationNetworkEntity(
@@ -25,7 +26,16 @@ data class StationNetworkEntity(
     val updateTime: String,
     @SerializedName("VersionID")
     val versionID: Int
-)
+) {
+    fun toStation(): Station = Station(
+        stationID,
+        stationName.zhTw,
+        stationAddress,
+        stationPosition.positionLat,
+        stationPosition.positionLon,
+        stops.map { Station.StopItem(it.stopID, it.stopName.zhTw) },
+        stops.map { Station.RouteItem(it.routeID, it.routeName.Zh_tw) })
+}
 
 data class StationName(
     @SerializedName("En")
