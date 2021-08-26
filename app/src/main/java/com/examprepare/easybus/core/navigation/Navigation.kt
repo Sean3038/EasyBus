@@ -64,7 +64,7 @@ fun EasyBusApp(toSystemSetting: () -> Unit, toSystemLocationSetting: () -> Unit)
                     toSystemSettings = toSystemSetting,
                     toSystemLocationSetting = toSystemLocationSetting,
                     toStation = actions.toStation,
-                    navigateBack = actions.navigateBack
+                    onBack = actions.navigateBack
                 )
             }
             composable(

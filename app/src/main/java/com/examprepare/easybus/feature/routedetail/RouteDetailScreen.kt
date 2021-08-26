@@ -85,7 +85,7 @@ fun Route(
 private fun RouteScreenPreview() {
     EasyBusTheme {
         Route(
-            route = Route("01", "紅12"),
+            route = Route("01", "紅12", "XXX", "XXX"),
             isLike = true,
             onBack = { },
             onLike = { },

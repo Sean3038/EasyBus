@@ -15,6 +15,9 @@ interface RouteEntityDao {
     @Query("SELECT * FROM route_entities WHERE RouteID == :routeId")
     suspend fun get(routeId: String): List<RouteLocalEntity>
 
+    @Query("SELECT * FROM route_entities WHERE RouteID IN (:routeIds)")
+    suspend fun get(routeIds: List<String>): List<RouteLocalEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg routeLocalEntity: RouteLocalEntity)
 }

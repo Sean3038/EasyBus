@@ -1,6 +1,7 @@
 package com.examprepare.easybus.core.model.local
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.examprepare.easybus.feature.model.Route
 
 @Entity(tableName = "route_entities")
@@ -11,5 +12,5 @@ data class RouteLocalEntity(
     val DepartureStopName: String,
     val DestinationStopName: String
 ) {
-    fun toRoute(): Route = Route(RouteID, RouteName)
+    fun toRoute(): Route = Route(RouteID, RouteName, DepartureStopName, DestinationStopName)
 }

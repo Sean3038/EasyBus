@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 interface RouteRepository {
     suspend fun route(routeId: String): Either<Failure, Route>
+    suspend fun getRoutes(routeIds: List<String>): Either<Failure, List<Route>>
 
     class Impl
     @Inject constructor(
@@ -42,6 +43,27 @@ interface RouteRepository {
             }
         }
 
+        override suspend fun getRoutes(routeIds: List<String>): Either<Failure, List<Route>> {
+            return try {
+                when (networkHandler.isNetworkAvailable()) {
+                    true -> {
+                        val routeEntity =
+                            cacheDatabase.routeEntity().get(routeIds)
+                                .takeIf { it.size == routeIds.size }
+                                ?: fetchAndCache(routeIds)
+                        val result = routeEntity.map {
+                            it.toRoute()
+                        }
+                        Either.Right(result)
+                    }
+                    false -> Either.Left(Failure.ServerError)
+                }
+            } catch (exception: Throwable) {
+                Timber.e(exception)
+                Either.Left(Failure.ServerError)
+            }
+        }
+
         private suspend fun fetchAndCache(routeId: String): RouteLocalEntity {
             var entity: RouteNetworkEntity? = null
             for (city in resourceCityArray) {
@@ -58,6 +80,23 @@ interface RouteRepository {
             } ?: throw RuntimeException("Route not found")
             cacheDatabase.routeEntity().insertAll(localEntity)
             return localEntity
+        }
+
+        private suspend fun fetchAndCache(routeIds: List<String>): List<RouteLocalEntity> {
+            val entities = mutableListOf<RouteNetworkEntity>()
+            for (city in resourceCityArray) {
+                entities.addAll(service.getRoutes(city, routeIds))
+            }
+            val result = entities.map {
+                RouteLocalEntity(
+                    it.RouteID,
+                    it.RouteName.Zh_tw,
+                    it.DepartureStopNameZh,
+                    it.DestinationStopNameZh
+                )
+            }
+            cacheDatabase.routeEntity().insertAll(*result.toTypedArray())
+            return result
         }
     }
 }

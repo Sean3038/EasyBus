@@ -14,10 +14,9 @@ import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,7 +26,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.examprepare.easybus.Const
 import com.examprepare.easybus.R
-import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
 import com.examprepare.easybus.feature.model.Station
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -48,7 +46,7 @@ fun SearchNearStopScreen(
     toSystemSettings: () -> Unit,
     toSystemLocationSetting: () -> Unit,
     toStation: (String) -> Unit,
-    navigateBack: () -> Unit
+    onBack: () -> Unit
 ) {
     val location = remember { mutableStateOf<Location?>(null) }
     val nearStations = viewModel.nearStations.collectAsState().value
@@ -57,7 +55,7 @@ fun SearchNearStopScreen(
         location = location,
         toSystemSettings = toSystemSettings,
         toSystemLocationSettings = toSystemLocationSetting,
-        navigateBack = navigateBack
+        onBack = onBack
     )
 
     LaunchedEffect(location.value) {
@@ -70,14 +68,35 @@ fun SearchNearStopScreen(
         }
     }
 
-    SearchNearStop(location = location.value, nearStations = nearStations)
+    SearchNearStop(
+        location = location.value,
+        nearStations = nearStations,
+        toStation = toStation,
+        onBack = onBack
+    )
 }
 
 @Composable
-fun SearchNearStop(location: Location?, nearStations: List<Station>) {
-    Scaffold(topBar = { TitleBar() }) {
+fun SearchNearStop(
+    location: Location?,
+    nearStations: List<Station>,
+    toStation: (String) -> Unit,
+    onBack: () -> Unit
+) {
+    Scaffold(topBar = {
+        TopAppBar(
+            title = {
+                Text("搜尋附近公車站位")
+            },
+            navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(Icons.Sharp.ArrowBack, contentDescription = "退回上一頁")
+                }
+            }
+        )
+    }) {
         Column {
-            if (location != null && nearStations.isNotEmpty()) {
+            if (location != null) {
                 Text(
                     modifier = Modifier
                         .wrapContentHeight()
@@ -101,6 +120,14 @@ fun SearchNearStop(location: Location?, nearStations: List<Station>) {
                             .position(destination)
 
                         map.setInfoWindowAdapter(StationInfoAdapter(context, nearStations))
+                        map.setOnInfoWindowClickListener { marker ->
+                            val index = marker.snippet?.toInt()
+                            index?.let {
+                                scope.launch {
+                                    toStation(nearStations[it].stationID)
+                                }
+                            }
+                        }
                         map.addCircle(
                             CircleOptions()
                                 .center(LatLng(location.latitude, location.longitude))
@@ -137,11 +164,11 @@ fun RequestLocation(
     location: MutableState<Location?>,
     toSystemSettings: () -> Unit,
     toSystemLocationSettings: () -> Unit,
-    navigateBack: () -> Unit
+    onBack: () -> Unit
 ) {
     AskLocationPermission(
         toSystemSettings = toSystemSettings,
-        navigateBack = navigateBack
+        navigateBack = onBack
     ) {
         val context = LocalContext.current
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -201,7 +228,7 @@ fun RequestLocation(
         } else {
             LocationNotAvailableDialog(
                 toSystemLocationSettings = toSystemLocationSettings,
-                navigateBack = navigateBack
+                navigateBack = onBack
             )
         }
     }
