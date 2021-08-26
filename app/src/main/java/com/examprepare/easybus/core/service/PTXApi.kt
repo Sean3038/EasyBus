@@ -11,6 +11,7 @@ interface PTXApi {
         const val ROUTES = "v2/Bus/Route/City"
         const val STOP = "v2/Bus/Stop/City"
         const val STATION = "v2/Bus/Station/City"
+        const val ESTIMATED_TIME_OF_ARRIVAL = "v2/Bus/EstimatedTimeOfArrival/City/"
         const val DISPLAY_STOP_OF_ROUTE = "v2/Bus/DisplayStopOfRoute/City/Taipei/"
     }
 
@@ -43,6 +44,14 @@ interface PTXApi {
         @Query("\$spatialFilter") spatialFilter: String?,
         @Query("\$format") format: String = "JSON"
     ): List<StationNetworkEntity>
+
+    @GET("$ESTIMATED_TIME_OF_ARRIVAL/{City}")
+    suspend fun estimatedTimeOfArrival(
+        @Path("City") city: String,
+        @Query("\$filter") filter: String?,
+        @Query("\$format") format: String = "JSON"
+    ): List<EstimatedTimeOfArrivalNetworkEntity>
+
 
     @GET("$STOP?\$format=JSON")
     suspend fun getStops(): List<StopNetworkEntity>

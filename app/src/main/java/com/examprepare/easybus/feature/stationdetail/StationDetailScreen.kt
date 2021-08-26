@@ -1,9 +1,7 @@
 package com.examprepare.easybus.feature.stationdetail
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,11 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.examprepare.easybus.core.ui.FailureView
-import com.examprepare.easybus.feature.model.Route
 import com.examprepare.easybus.feature.model.Station
 import com.examprepare.easybus.feature.stationdetail.exception.NoStationFailure
+import com.examprepare.easybus.feature.stationdetail.model.EstimateRoute
+import com.examprepare.easybus.feature.stationdetail.model.StopStatus
 
 @Composable
 fun StationDetailScreen(
@@ -52,7 +52,7 @@ fun StationDetailScreen(
 @Composable
 fun StationDetail(
     station: Station,
-    routes: List<Route>,
+    routes: List<EstimateRoute>,
     toRoute: (String) -> Unit,
     onBack: () -> Unit
 ) {
@@ -80,12 +80,59 @@ fun StationDetail(
                     shape = RoundedCornerShape(8.dp),
                     elevation = 4.dp
                 ) {
-                    Column(modifier = Modifier.padding(8.dp)) {
-                        Text(text = it.routeName, style = MaterialTheme.typography.h5)
-                        Text(
-                            "${it.departureStopName} - ${it.destinationSStopName}",
-                            style = MaterialTheme.typography.subtitle1
-                        )
+                    Row(modifier = Modifier.padding(8.dp)) {
+
+                        when (it.stopStatus) {
+                            StopStatus.NoOperation ->
+                                Text(
+                                    modifier = Modifier.width(80.dp),
+                                    text = "今日未營運"
+                                )
+                            StopStatus.NoShift ->
+                                Text(
+                                    modifier = Modifier.width(80.dp),
+                                    text = "末班車已過"
+                                )
+                            StopStatus.NonStop ->
+                                Text(
+                                    modifier = Modifier.width(80.dp),
+                                    text = "不停靠"
+                                )
+                            StopStatus.None ->
+                                Spacer(modifier = Modifier.width(80.dp))
+                            StopStatus.NoneDeparture ->
+                                Text(
+                                    modifier = Modifier.width(80.dp),
+                                    text = "尚未發車"
+                                )
+                            StopStatus.Normal ->
+                                if (it.estimateTime != null) {
+                                    Text(
+                                        modifier = Modifier.width(80.dp),
+                                        text = "${it.estimateTime / 60}分"
+                                    )
+                                } else {
+                                    Spacer(modifier = Modifier.width(80.dp))
+                                }
+                        }
+
+                        Column {
+                            Text(text = it.routeName, style = MaterialTheme.typography.h5)
+                            Text(
+                                "${it.departureStopName} - ${it.destinationStopName}",
+                                style = MaterialTheme.typography.subtitle1
+                            )
+                        }
+                        it.plateNumber?.let { plateNumber ->
+                            Text(text = plateNumber, style = MaterialTheme.typography.subtitle1)
+                            if (it.isLastBus == true) {
+                                Text(
+                                    text = "(末班車)",
+                                    color = Color.Red,
+                                    style = MaterialTheme.typography.subtitle1
+                                )
+                            }
+                        }
                     }
                 }
             }

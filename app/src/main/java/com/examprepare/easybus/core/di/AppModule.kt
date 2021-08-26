@@ -17,6 +17,7 @@ import com.examprepare.easybus.feature.routedetail.usecase.GetRoute
 import com.examprepare.easybus.feature.routedetail.usecase.RemoveLikeRoute
 import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStation
 import com.examprepare.easybus.feature.searchroute.usecase.SearchRoute
+import com.examprepare.easybus.feature.stationdetail.usecase.GetEstimateRoutes
 import com.examprepare.easybus.feature.stationdetail.usecase.GetRoutes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -146,6 +147,16 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providerEstimateTimeOfArrivalRepository(
+        @PTXResourceCityArray resourceCityArray: Array<String>,
+        ptxService: PTXService,
+        networkHandler: NetworkHandler
+    ): EstimateTimeOfArrivalRepository {
+        return EstimateTimeOfArrivalRepository.Impl(resourceCityArray, networkHandler, ptxService)
+    }
+
+    @Provides
+    @Singleton
     fun providerGetRoute(routeRepository: RouteRepository): GetRoute {
         return GetRoute(routeRepository)
     }
@@ -191,6 +202,14 @@ object AppModule {
         return GetNearStation(stationRepository)
     }
 
+    @Provides
+    @Singleton
+    fun providerGetEstimateRoute(
+        estimateTimeOfArrivalRepository: EstimateTimeOfArrivalRepository,
+        routeRepository: RouteRepository
+    ): GetEstimateRoutes {
+        return GetEstimateRoutes(estimateTimeOfArrivalRepository, routeRepository)
+    }
 
     @Provides
     @PTXResourceCityArray

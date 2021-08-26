@@ -1,5 +1,6 @@
 package com.examprepare.easybus.core.service
 
+import com.examprepare.easybus.core.model.network.EstimatedTimeOfArrivalNetworkEntity
 import com.examprepare.easybus.core.model.network.RouteNetworkEntity
 import com.examprepare.easybus.core.model.network.SearchRouteNetworkEntity
 import com.examprepare.easybus.core.model.network.StationNetworkEntity
@@ -46,6 +47,21 @@ class PTXService(private val api: PTXApi) {
     suspend fun getStations(city: String, stationId: String): List<StationNetworkEntity> {
         val filter = "StationID eq '$stationId'"
         return api.getStations(city, filter, null)
+    }
+
+    suspend fun estimateTimeOfArrival(
+        city: String,
+        stopIds: List<String>
+    ): List<EstimatedTimeOfArrivalNetworkEntity> {
+        var filter: String? = null
+        stopIds.forEachIndexed { index, stopId ->
+            if (index == 0) {
+                filter = "StopID eq '$stopId'"
+            } else {
+                filter += " or StopID eq '$stopId'"
+            }
+        }
+        return api.estimatedTimeOfArrival(city, filter)
     }
 
     suspend fun getStops() = api.getStops()
