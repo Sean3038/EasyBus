@@ -61,7 +61,7 @@ class PTXService(private val api: PTXApi) {
                 filter += " or StopID eq '$stopId'"
             }
         }
-        return api.estimatedTimeOfArrival(city, filter)
+        return api.estimatedTimeOfArrival(city, filter, "RouteName/Zh_tw")
     }
 
     suspend fun getStops() = api.getStops()

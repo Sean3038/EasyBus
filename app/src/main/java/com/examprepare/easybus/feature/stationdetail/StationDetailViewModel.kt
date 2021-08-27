@@ -32,16 +32,19 @@ class StationDetailViewModel @Inject constructor(
         }
     }
 
-    private fun handleGetStation(station: Station) {
-        _station.value = station
+    fun getEstimateRoutes(stopItems: List<Station.StopItem>) {
         viewModelScope.launch {
-            val routeList = station.stopItems.map {
+            val routeList = stopItems.map {
                 it.stopId
             }
             getEstimateRoutes(GetEstimateRoutes.Params(routeList)) {
                 it.fold(::handleFailure, ::handleGetRoutes)
             }
         }
+    }
+
+    private fun handleGetStation(station: Station) {
+        _station.value = station
     }
 
     private fun handleGetRoutes(routes: List<EstimateRoute>) {

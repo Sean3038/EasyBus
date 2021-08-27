@@ -39,7 +39,7 @@ class GetEstimateRoutes @Inject constructor(
                         route.departureStopName,
                         route.destinationSStopName,
                         when (it.stopStatus) {
-                            0 -> StopStatus.Normal
+                            0 -> if (it.estimateTime < 60) StopStatus.OnPulledIN else StopStatus.Normal
                             1 -> StopStatus.NoneDeparture
                             2 -> StopStatus.NonStop
                             3 -> StopStatus.NoShift

@@ -6,5 +6,5 @@ data class EstimateTimeOfArrival(
     val plateNumb: String?,
     val stopStatus: Int,
     val estimateTime: Int,
-    val isLastBus:Boolean,
+    val isLastBus: Boolean
 )

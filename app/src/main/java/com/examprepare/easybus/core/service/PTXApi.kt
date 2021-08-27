@@ -49,6 +49,7 @@ interface PTXApi {
     suspend fun estimatedTimeOfArrival(
         @Path("City") city: String,
         @Query("\$filter") filter: String?,
+        @Query("\$orderby") orderby: String?,
         @Query("\$format") format: String = "JSON"
     ): List<EstimatedTimeOfArrivalNetworkEntity>
 
