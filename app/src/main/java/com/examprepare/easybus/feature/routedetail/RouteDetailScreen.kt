@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.examprepare.easybus.core.ui.FailureView
 import com.examprepare.easybus.feature.model.Route
 import com.examprepare.easybus.ui.theme.EasyBusTheme
+import com.google.accompanist.pager.ExperimentalPagerApi
 
 @Composable
 fun RouteScreen(viewModel: RouteDetailViewModel, routeName: String, onBack: () -> Unit) {
@@ -36,6 +37,7 @@ fun RouteScreen(viewModel: RouteDetailViewModel, routeName: String, onBack: () -
     FailureView(failure = failure)
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Route(
     route: Route,

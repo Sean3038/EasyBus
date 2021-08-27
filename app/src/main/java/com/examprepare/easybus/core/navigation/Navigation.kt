@@ -42,7 +42,11 @@ fun EasyBusApp(toSystemSetting: () -> Unit, toSystemLocationSetting: () -> Unit)
             }
             composable(Route) {
                 val viewModel = hiltViewModel<SearchRouteViewModel>()
-                SearchRouteScreen(viewModel, actions.toRoute)
+                SearchRouteScreen(
+                    viewModel = viewModel,
+                    toRoute = actions.toRoute,
+                    onBack = actions.navigateBack
+                )
             }
             composable(
                 "$Route/{${Destinations.RouteArgs.RouteName}}",

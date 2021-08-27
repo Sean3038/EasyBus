@@ -109,6 +109,7 @@ dependencies {
     implementation "androidx.room:room-runtime:2.3.0"
     kapt "androidx.room:room-compiler:2.3.0"
 
-    //accompanist (permission)
+    //accompanist
     implementation "com.google.accompanist:accompanist-permissions:0.17.0"
+    implementation "com.google.accompanist:accompanist-pager:0.17.0"
 }

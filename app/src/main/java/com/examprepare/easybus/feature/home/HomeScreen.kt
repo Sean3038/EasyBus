@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.examprepare.easybus.core.ui.FailureView
-import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.feature.home.domain.model.FavoriteRoute
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 
@@ -49,7 +48,15 @@ fun Home(
     toSearchNearStop: () -> Unit,
     openRoute: (String) -> Unit
 ) {
-    Scaffold(topBar = { TitleBar() }) {
+    Scaffold(topBar = {
+        TopAppBar(
+            title = {
+                Row {
+                    Text(text = "EasyBus")
+                }
+            }
+        )
+    }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
