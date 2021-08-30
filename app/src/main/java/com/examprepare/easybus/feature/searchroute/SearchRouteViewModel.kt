@@ -1,0 +1,44 @@
+package com.examprepare.easybus.feature.searchroute
+
+import androidx.lifecycle.viewModelScope
+import com.examprepare.easybus.core.interactor.UseCase
+import com.examprepare.easybus.core.platform.BaseViewModel
+import com.examprepare.easybus.feature.searchroute.domain.model.Route
+import com.examprepare.easybus.feature.searchroute.domain.usecase.GetAllRoute
+import com.examprepare.easybus.feature.searchroute.domain.usecase.SearchRoute
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class SearchRouteViewModel @Inject constructor(
+    private val getAllRoute: GetAllRoute,
+    private val searchRoute: SearchRoute
+) : BaseViewModel() {
+
+    private val _searchRouteName: MutableStateFlow<String> = MutableStateFlow("");
+    val searchRouteName = _searchRouteName.asStateFlow()
+    private val _routes: MutableStateFlow<List<Route>> = MutableStateFlow(emptyList())
+    val routes = _routes.asStateFlow()
+
+
+    init {
+        viewModelScope.launch {
+            getAllRoute.run(UseCase.None()).fold(::handleFailure, ::handleGetAllRoute)
+        }
+    }
+
+    fun onSearchChange(searchRouteName: String) {
+        viewModelScope.launch {
+            _searchRouteName.value = searchRouteName
+            searchRoute.run(SearchRoute.Params(searchRouteName))
+                .fold(::handleFailure, ::handleGetAllRoute)
+        }
+    }
+
+    private fun handleGetAllRoute(routes: List<Route>) {
+        _routes.value = routes.sortedBy { it.routeName }
+    }
+}
