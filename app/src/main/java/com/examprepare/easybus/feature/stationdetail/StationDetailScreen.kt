@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.examprepare.easybus.Const
 import com.examprepare.easybus.core.ui.FailureView
 import com.examprepare.easybus.feature.model.Station
+import com.examprepare.easybus.feature.model.StopStatus
 import com.examprepare.easybus.feature.stationdetail.exception.NoStationFailure
 import com.examprepare.easybus.feature.stationdetail.model.EstimateRoute
-import com.examprepare.easybus.feature.stationdetail.model.StopStatus
 import com.examprepare.easybus.ui.theme.Blue400
 import com.examprepare.easybus.ui.theme.Gray500
 import com.examprepare.easybus.ui.theme.Green400
