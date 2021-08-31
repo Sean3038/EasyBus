@@ -5,10 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.runtime.*
@@ -73,7 +76,7 @@ fun RouteScreen(
     FailureView(failure = failure)
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun Route(
     route: Route,
@@ -85,35 +88,132 @@ fun Route(
     onRemoveLike: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = realTimeRouteInfoList.size)
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val scope = rememberCoroutineScope()
+    var bottomSheet by remember { mutableStateOf<BottomSheet>(BottomSheet.None) }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetState,
+        sheetContent = {
+            when (bottomSheet) {
+                is BottomSheet.Menu -> {
+                    RouteMenu(
+                        onClickApproachNotify = {
+                            scope.launch {
+                                bottomSheet = BottomSheet.ApproachNotify(
+                                    bottomSheet.item,
+                                    route.routeId
+                                )
+                            }
+                        },
+                        onClickToStation = {
+                            scope.launch {
+                                bottomSheetState.hide()
+                                toStation(bottomSheet.item.stationId)
+                            }
+                        }
+                    )
+                }
+                is BottomSheet.ApproachNotify -> {
+                    val settings = Const.APPROACH_NOTIFY_MINUTES_SETTINGS
+                    RouteNotifyApproachSetting(settings.map { "$it 分鐘" }) {
+                        scope.launch {
+                            //TODO 到站提醒
+                            bottomSheetState.hide()
+                            bottomSheet = BottomSheet.None
+                        }
+                    }
+                }
+                else -> {
+                    Text("No Item")
+                }
+            }
+        }
     ) {
-        Scaffold(topBar = {
-            RouteDetailTitleBar(
-                route = route,
-                realTimeRouteInfoList = realTimeRouteInfoList,
-                isLike = isLike,
-                pagerState = pagerState,
-                onBack = onBack,
-                onLike = onLike,
-                onRemoveLike = onRemoveLike
-            )
-        }) {
-            if (realTimeRouteInfoList.isNotEmpty()) {
-                RouteDetail(
-                    pagerState = pagerState,
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Scaffold(topBar = {
+                RouteDetailTitleBar(
+                    route = route,
                     realTimeRouteInfoList = realTimeRouteInfoList,
-                    toStation = toStation
+                    isLike = isLike,
+                    pagerState = pagerState,
+                    onBack = onBack,
+                    onLike = onLike,
+                    onRemoveLike = onRemoveLike
                 )
-            } else {
-                Text("尚無路線資料")
+            }) {
+                if (realTimeRouteInfoList.isNotEmpty()) {
+                    RouteDetail(
+                        pagerState = pagerState,
+                        realTimeRouteInfoList = realTimeRouteInfoList,
+                        onClickStop = {
+                            scope.launch {
+                                bottomSheet = BottomSheet.Menu(it)
+                                bottomSheetState.show()
+                            }
+                        }
+                    )
+                } else {
+                    Text("尚無路線資料")
+                }
             }
         }
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun RouteMenu(onClickToStation: () -> Unit, onClickApproachNotify: () -> Unit) {
+    LazyColumn {
+        item {
+            ListItem(
+                modifier = Modifier.clickable {
+                    onClickApproachNotify()
+                },
+                text = { Text("到站提醒") },
+                icon = {
+                    Icon(
+                        Icons.Default.Notifications,
+                        contentDescription = "到站提醒"
+                    )
+                }
+            )
+        }
+        item {
+            ListItem(
+                modifier = Modifier.clickable {
+                    onClickToStation()
+                },
+                text = { Text("查看站牌其他公車路線") },
+                icon = {
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = "查看站牌其他公車路線"
+                    )
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun RouteNotifyApproachSetting(settings: List<String>, onClickIndex: (Int) -> Unit) {
+    LazyColumn {
+        itemsIndexed(settings) { index, item ->
+            ListItem(
+                modifier = Modifier.clickable {
+                    onClickIndex(index)
+                },
+                text = { Text(item) }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun RouteDetailTitleBar(
     route: Route,
@@ -151,7 +251,7 @@ private fun RouteDetailTitleBar(
                 }
             }
         )
-        if (pagerState.pageCount != 0) {
+        if (realTimeRouteInfoList.isNotEmpty()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage
             ) {
@@ -176,7 +276,7 @@ private fun RouteDetailTitleBar(
 private fun RouteDetail(
     pagerState: PagerState,
     realTimeRouteInfoList: List<RealTimeRouteInfo>,
-    toStation: (String) -> Unit
+    onClickStop: (RealTimeRouteInfo.StopItem) -> Unit
 ) {
     HorizontalPager(state = pagerState) { page ->
         LazyColumn {
@@ -186,7 +286,7 @@ private fun RouteDetail(
                         .fillMaxWidth()
                         .padding(8.dp)
                         .clickable {
-                            toStation(it.stationId)
+                            onClickStop(it)
                         },
                     shape = RoundedCornerShape(8.dp),
                     elevation = 4.dp
@@ -234,4 +334,10 @@ private fun RouteScreenPreview() {
             onRemoveLike = { }
         )
     }
+}
+
+private sealed class BottomSheet(val item: RealTimeRouteInfo.StopItem) {
+    object None : BottomSheet(RealTimeRouteInfo.StopItem.empty)
+    class Menu(item: RealTimeRouteInfo.StopItem) : BottomSheet(item)
+    class ApproachNotify(item: RealTimeRouteInfo.StopItem, val routeId: String) : BottomSheet(item)
 }

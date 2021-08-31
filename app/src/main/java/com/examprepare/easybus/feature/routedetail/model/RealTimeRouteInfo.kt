@@ -15,5 +15,9 @@ data class RealTimeRouteInfo(
         val plateNumb: String?,
         val estimateTime: Int?,
         val isLastBus: Boolean
-    )
+    ) {
+        companion object {
+            val empty = StopItem("", "", "", StopStatus.None, -1, null, null, false)
+        }
+    }
 }
