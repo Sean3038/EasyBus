@@ -12,6 +12,7 @@ import timber.log.Timber
 interface EstimateTimeOfArrivalRepository {
 
     suspend fun estimate(stopIds: List<String>): Either<Failure, List<EstimateTimeOfArrival>>
+    suspend fun estimate(routeId: String): Either<Failure, List<EstimateTimeOfArrival>>
 
     class Impl(
         @PTXResourceCityArray private val resourceCityArray: Array<String>,
@@ -22,10 +23,30 @@ interface EstimateTimeOfArrivalRepository {
             return try {
                 when (networkHandler.isNetworkAvailable()) {
                     true -> {
-                        //若沒有暫存則下載資料
                         val resultEntities = mutableListOf<EstimatedTimeOfArrivalNetworkEntity>()
                         for (city in resourceCityArray) {
                             resultEntities.addAll(service.estimateTimeOfArrival(city, stopIds))
+                        }
+                        val result = resultEntities.map {
+                            it.toEstimateTimeOfArrival()
+                        }
+                        Either.Right(result)
+                    }
+                    false -> Either.Left(Failure.ServerError)
+                }
+            } catch (exception: Throwable) {
+                Timber.e(exception)
+                Either.Left(Failure.ServerError)
+            }
+        }
+
+        override suspend fun estimate(routeId: String): Either<Failure, List<EstimateTimeOfArrival>> {
+            return try {
+                when (networkHandler.isNetworkAvailable()) {
+                    true -> {
+                        val resultEntities = mutableListOf<EstimatedTimeOfArrivalNetworkEntity>()
+                        for (city in resourceCityArray) {
+                            resultEntities.addAll(service.estimateTimeOfArrival(city, routeId))
                         }
                         val result = resultEntities.map {
                             it.toEstimateTimeOfArrival()

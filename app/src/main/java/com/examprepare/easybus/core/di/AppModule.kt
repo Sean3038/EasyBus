@@ -13,6 +13,7 @@ import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.home.domain.usecase.GetFavoriteRoutes
 import com.examprepare.easybus.feature.repository.*
 import com.examprepare.easybus.feature.routedetail.usecase.AddLikeRoute
+import com.examprepare.easybus.feature.routedetail.usecase.GetRealTimeRouteInfo
 import com.examprepare.easybus.feature.routedetail.usecase.GetRoute
 import com.examprepare.easybus.feature.routedetail.usecase.RemoveLikeRoute
 import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStation
@@ -157,6 +158,22 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providerDisplayStopOfRouteRepository(
+        @PTXResourceCityArray resourceCityArray: Array<String>,
+        ptxService: PTXService,
+        ptxDataBase: PTXDataBase,
+        networkHandler: NetworkHandler
+    ): DisplayStopOfRouteRepository {
+        return DisplayStopOfRouteRepository.Impl(
+            resourceCityArray,
+            networkHandler,
+            ptxService,
+            ptxDataBase
+        )
+    }
+
+    @Provides
+    @Singleton
     fun providerGetRoute(routeRepository: RouteRepository): GetRoute {
         return GetRoute(routeRepository)
     }
@@ -209,6 +226,20 @@ object AppModule {
         routeRepository: RouteRepository
     ): GetEstimateRoutes {
         return GetEstimateRoutes(estimateTimeOfArrivalRepository, routeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providerGetRealTimeRouteInfo(
+        routeRepository: RouteRepository,
+        displayStopOfRouteRepository: DisplayStopOfRouteRepository,
+        estimateTimeOfArrivalRepository: EstimateTimeOfArrivalRepository
+    ): GetRealTimeRouteInfo {
+        return GetRealTimeRouteInfo(
+            routeRepository,
+            displayStopOfRouteRepository,
+            estimateTimeOfArrivalRepository
+        )
     }
 
     @Provides

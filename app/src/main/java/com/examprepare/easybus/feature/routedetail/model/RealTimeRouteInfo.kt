@@ -8,8 +8,12 @@ data class RealTimeRouteInfo(
 ) {
     data class StopItem(
         val stopId: String,
+        val stationId: String,
         val stopName: String,
         val stopStatus: StopStatus,
-        val estimateTime: Int?
+        val stopSequence: Int,
+        val plateNumb: String?,
+        val estimateTime: Int?,
+        val isLastBus: Boolean
     )
 }

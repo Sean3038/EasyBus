@@ -4,7 +4,8 @@ data class EstimateTimeOfArrival(
     val routeId: String,
     val stopId: String,
     val plateNumb: String?,
-    val stopStatus: Int,
-    val estimateTime: Int,
+    val direction: Direction,
+    val stopStatus: StopStatus = StopStatus.None,
+    val estimateTime: Int?,
     val isLastBus: Boolean
 )

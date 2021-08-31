@@ -1,6 +1,8 @@
 package com.examprepare.easybus.core.model.network
 
+import com.examprepare.easybus.feature.model.Direction
 import com.examprepare.easybus.feature.model.EstimateTimeOfArrival
+import com.examprepare.easybus.feature.model.StopStatus
 import com.google.gson.annotations.SerializedName
 
 data class EstimatedTimeOfArrivalNetworkEntity(
@@ -13,7 +15,7 @@ data class EstimatedTimeOfArrivalNetworkEntity(
     @SerializedName("Direction")
     val direction: Int,
     @SerializedName("EstimateTime")
-    val estimateTime: Int,
+    val estimateTime: Int?,
     @SerializedName("Estimates")
     val estimates: List<Estimate>,
     @SerializedName("IsLastBus")
@@ -60,7 +62,28 @@ data class EstimatedTimeOfArrivalNetworkEntity(
     val updateTime: String
 ) {
     fun toEstimateTimeOfArrival(): EstimateTimeOfArrival =
-        EstimateTimeOfArrival(routeID, stopID, plateNumb, stopStatus, estimateTime, isLastBus)
+        EstimateTimeOfArrival(
+            routeID,
+            stopID,
+            plateNumb,
+            when (direction) {
+                0 -> Direction.Departure
+                1 -> Direction.Return
+                2 -> Direction.Loop
+                else -> Direction.UnKnown
+            },
+            when {
+                estimateTime != null -> if (estimateTime < 60) StopStatus.OnPulledIN else StopStatus.Normal
+                stopStatus == 0 -> StopStatus.OnPulledIN
+                stopStatus == 1 -> StopStatus.NoneDeparture
+                stopStatus == 2 -> StopStatus.NonStop
+                stopStatus == 3 -> StopStatus.NoShift
+                stopStatus == 4 -> StopStatus.NoOperation
+                else -> StopStatus.None
+            },
+            estimateTime,
+            isLastBus
+        )
 }
 
 data class Estimate(

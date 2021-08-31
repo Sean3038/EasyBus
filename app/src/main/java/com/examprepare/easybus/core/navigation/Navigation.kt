@@ -49,15 +49,16 @@ fun EasyBusApp(toSystemSetting: () -> Unit, toSystemLocationSetting: () -> Unit)
                 )
             }
             composable(
-                "$Route/{${Destinations.RouteArgs.RouteName}}",
-                arguments = listOf(navArgument(Destinations.RouteArgs.RouteName) {
+                "$Route/{${Destinations.RouteArgs.RouteID}}",
+                arguments = listOf(navArgument(Destinations.RouteArgs.RouteID) {
                     type = NavType.StringType
                 })
             ) {
                 val viewModel = hiltViewModel<RouteDetailViewModel>()
                 RouteScreen(
                     viewModel = viewModel,
-                    routeName = it.arguments?.getString(Destinations.RouteArgs.RouteName) ?: "",
+                    routeId = it.arguments?.getString(Destinations.RouteArgs.RouteID) ?: "",
+                    toStation = actions.toStation,
                     onBack = actions.navigateBack
                 )
             }
@@ -96,7 +97,7 @@ object Destinations {
     const val Station = "station"
 
     object RouteArgs {
-        const val RouteName = "routeName"
+        const val RouteID = "routeID"
     }
 
     object StationArgs {

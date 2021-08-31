@@ -1,5 +1,7 @@
 package com.examprepare.easybus.core.model.network
 
+import com.examprepare.easybus.feature.model.Direction
+import com.examprepare.easybus.feature.model.DisplayStopOfRoute
 import com.google.gson.annotations.SerializedName
 
 data class DisplayStopOfRouteEntity(
@@ -17,7 +19,21 @@ data class DisplayStopOfRouteEntity(
     val updateTime: String,
     @SerializedName("VersionID")
     val versionID: Int
-)
+) {
+    fun toDisplayStopOfRoute() = DisplayStopOfRoute(
+        routeID,
+        routeName.Zh_tw,
+        when (direction) {
+            0 -> Direction.Departure
+            1 -> Direction.Return
+            2 -> Direction.Loop
+            else -> Direction.UnKnown
+        },
+        stops.map {
+            DisplayStopOfRoute.Stop(it.stopID, it.stationID, it.stopName.zhTw,it.stopSequence)
+        }
+    )
+}
 
 data class StopInfo(
     @SerializedName("StationID")

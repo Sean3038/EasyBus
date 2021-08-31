@@ -11,8 +11,8 @@ interface PTXApi {
         const val ROUTES = "v2/Bus/Route/City"
         const val STOP = "v2/Bus/Stop/City"
         const val STATION = "v2/Bus/Station/City"
-        const val ESTIMATED_TIME_OF_ARRIVAL = "v2/Bus/EstimatedTimeOfArrival/City/"
-        const val DISPLAY_STOP_OF_ROUTE = "v2/Bus/DisplayStopOfRoute/City/Taipei/"
+        const val ESTIMATED_TIME_OF_ARRIVAL = "v2/Bus/EstimatedTimeOfArrival/City"
+        const val DISPLAY_STOP_OF_ROUTE = "v2/Bus/DisplayStopOfRoute/City"
     }
 
     @GET("$ROUTES/{City}")
@@ -52,6 +52,13 @@ interface PTXApi {
         @Query("\$orderby") orderby: String?,
         @Query("\$format") format: String = "JSON"
     ): List<EstimatedTimeOfArrivalNetworkEntity>
+
+    @GET("$DISPLAY_STOP_OF_ROUTE/{City}")
+    suspend fun getDisplayStopOfRoute(
+        @Path("City") city: String,
+        @Query("\$filter") filter: String?,
+        @Query("\$format") format: String = "JSON"
+    ): List<DisplayStopOfRouteEntity>
 
 
     @GET("$STOP?\$format=JSON")

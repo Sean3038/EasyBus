@@ -63,6 +63,7 @@ fun StationDetailScreen(
         toRoute = toRoute,
         onBack = navigateBack
     )
+
     if (failure is NoStationFailure) {
         TODO("Station not found")
     } else {
