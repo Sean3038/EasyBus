@@ -14,9 +14,10 @@ import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.ArrowBack
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +27,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.examprepare.easybus.Const
 import com.examprepare.easybus.R
+import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
 import com.examprepare.easybus.feature.model.Station
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -84,16 +86,7 @@ fun SearchNearStop(
     onBack: () -> Unit
 ) {
     Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Text("搜尋附近公車站位")
-            },
-            navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.Sharp.ArrowBack, contentDescription = "退回上一頁")
-                }
-            }
-        )
+        TitleBar("搜尋附近公車站位",onBack)
     }) {
         Column {
             if (location != null) {

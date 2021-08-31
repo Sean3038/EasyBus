@@ -49,13 +49,7 @@ fun Home(
     openRoute: (String) -> Unit
 ) {
     Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Row {
-                    Text(text = "EasyBus")
-                }
-            }
-        )
+        HomeTitleBar()
     }) {
         Column(
             modifier = Modifier
@@ -84,6 +78,17 @@ fun Home(
             LikeRoutesView(favoriteRoutes, openRoute)
         }
     }
+}
+
+@Composable
+private fun HomeTitleBar() {
+    TopAppBar(
+        title = {
+            Row {
+                Text(text = "EasyBus")
+            }
+        }
+    )
 }
 
 

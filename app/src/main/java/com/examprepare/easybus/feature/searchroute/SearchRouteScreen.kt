@@ -8,10 +8,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -22,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.feature.model.SearchRouteResult
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 
@@ -55,16 +58,7 @@ fun SearchRoute(
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-        TopAppBar(
-            title = {
-                Text("搜尋路線")
-            },
-            navigationIcon = {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.Sharp.ArrowBack, contentDescription = "退回上一頁")
-                }
-            }
-        )
+        TitleBar("搜尋路線", onBack)
         SearchBar(searchText, onSearchChange)
         RoutesView(routes, toRoute)
     }
