@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.examprepare.easybus.Const
 import com.examprepare.easybus.core.navigation.Destinations.Home
 import com.examprepare.easybus.core.navigation.Destinations.Route
 import com.examprepare.easybus.core.navigation.Destinations.SearchNearStop
@@ -35,7 +36,7 @@ fun EasyBusApp(
 ) {
     val navController = rememberNavController()
     val actions = remember(navController) { Actions(navController) }
-    val uri = "https://easybus.com"
+    val uri = Const.APP_URL
     EasyBusTheme {
         NavHost(navController = navController, startDestination = Home) {
             composable(Home) {
@@ -61,7 +62,7 @@ fun EasyBusApp(
                     type = NavType.StringType
                 }),
                 deepLinks = listOf(navDeepLink {
-                    uriPattern = "$uri/$Route/${Destinations.RouteArgs.RouteID}}"
+                    uriPattern = "$uri/$Route/{${Destinations.RouteArgs.RouteID}}"
                 }),
             ) {
                 val viewModel = hiltViewModel<RouteDetailViewModel>()

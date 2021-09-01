@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
-import com.examprepare.easybus.core.navigation.Destinations
 import com.examprepare.easybus.core.navigation.Destinations.Route
 import com.examprepare.easybus.core.navigation.EasyBusApp
 import com.examprepare.easybus.core.notification.NotificationManager
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity() {
                 val context = applicationContext
                 val deepLinkIntent = Intent(
                     Intent.ACTION_VIEW,
-                    "https://easybus.com/route/${it.routeId}".toUri(),
+                    "${Const.APP_URL}/$Route/${it.routeId}".toUri(),
                     context,
                     MainActivity::class.java
                 )
@@ -84,5 +83,4 @@ class MainActivity : ComponentActivity() {
     ) {
         notifyApproachViewModel.observeApproachNotify(routeId, stopId, direction, minute)
     }
-
 }

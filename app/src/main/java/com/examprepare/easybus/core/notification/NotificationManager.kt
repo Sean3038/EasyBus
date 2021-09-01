@@ -36,7 +36,7 @@ class NotificationManager @Inject constructor(
                 setShowBadge(true)
                 enableVibration(false)
             }
-            // Register the channel with the system
+
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
@@ -54,7 +54,6 @@ class NotificationManager @Inject constructor(
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setFullScreenIntent(pendingIntent, true)
-
 
         with(NotificationManagerCompat.from(context)) {
             notify(idGenerator.generateID(APPROACH_NOTIFY_CHANNEL_ID), builder.build())

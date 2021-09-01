@@ -39,7 +39,7 @@
 
                 <data
                     android:host="easybus.com"
-                    android:scheme="https" />
+                    android:scheme="easybus" />
             </intent-filter>
         </activity>
 
