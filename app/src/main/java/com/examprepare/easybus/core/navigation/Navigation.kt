@@ -9,12 +9,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import com.examprepare.easybus.core.navigation.Destinations.Home
 import com.examprepare.easybus.core.navigation.Destinations.Route
 import com.examprepare.easybus.core.navigation.Destinations.SearchNearStop
 import com.examprepare.easybus.core.navigation.Destinations.Station
 import com.examprepare.easybus.feature.home.HomeScreen
 import com.examprepare.easybus.feature.home.HomeViewModel
+import com.examprepare.easybus.feature.model.Direction
 import com.examprepare.easybus.feature.routedetail.RouteDetailViewModel
 import com.examprepare.easybus.feature.routedetail.RouteScreen
 import com.examprepare.easybus.feature.searchnearstop.SearchNearStopScreen
@@ -26,9 +28,14 @@ import com.examprepare.easybus.feature.stationdetail.StationDetailViewModel
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 
 @Composable
-fun EasyBusApp(toSystemSetting: () -> Unit, toSystemLocationSetting: () -> Unit) {
+fun EasyBusApp(
+    observeApproachNotify: (routeId: String, stopId: String, direction: Direction, minute: Int) -> Unit,
+    toSystemSetting: () -> Unit,
+    toSystemLocationSetting: () -> Unit
+) {
     val navController = rememberNavController()
     val actions = remember(navController) { Actions(navController) }
+    val uri = "https://easybus.com"
     EasyBusTheme {
         NavHost(navController = navController, startDestination = Home) {
             composable(Home) {
@@ -52,12 +59,16 @@ fun EasyBusApp(toSystemSetting: () -> Unit, toSystemLocationSetting: () -> Unit)
                 "$Route/{${Destinations.RouteArgs.RouteID}}",
                 arguments = listOf(navArgument(Destinations.RouteArgs.RouteID) {
                     type = NavType.StringType
-                })
+                }),
+                deepLinks = listOf(navDeepLink {
+                    uriPattern = "$uri/$Route/${Destinations.RouteArgs.RouteID}}"
+                }),
             ) {
                 val viewModel = hiltViewModel<RouteDetailViewModel>()
                 RouteScreen(
                     viewModel = viewModel,
                     routeId = it.arguments?.getString(Destinations.RouteArgs.RouteID) ?: "",
+                    observeApproachNotify = observeApproachNotify,
                     toStation = actions.toStation,
                     onBack = actions.navigateBack
                 )

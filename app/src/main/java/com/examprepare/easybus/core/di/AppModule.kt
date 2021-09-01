@@ -1,16 +1,21 @@
 package com.examprepare.easybus.core.di
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.examprepare.easybus.Const
 import com.examprepare.easybus.core.database.PTXDataBase
 import com.examprepare.easybus.core.database.PersonalDataBase
 import com.examprepare.easybus.core.interceptor.NetworkInterceptor
 import com.examprepare.easybus.core.interceptor.PtxRequestInterceptor
+import com.examprepare.easybus.core.notification.NotificationIDGenerator
+import com.examprepare.easybus.core.notification.NotificationManager
 import com.examprepare.easybus.core.platform.NetworkHandler
 import com.examprepare.easybus.core.service.PTXApi
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.home.domain.usecase.GetFavoriteRoutes
+import com.examprepare.easybus.feature.notifyapproach.usecase.ObserveApproachInfo
 import com.examprepare.easybus.feature.repository.*
 import com.examprepare.easybus.feature.routedetail.usecase.AddLikeRoute
 import com.examprepare.easybus.feature.routedetail.usecase.GetRealTimeRouteInfo
@@ -95,6 +100,27 @@ object AppModule {
     @Singleton
     fun providerNetworkHandler(@ApplicationContext appContext: Context): NetworkHandler {
         return NetworkHandler(appContext)
+    }
+
+    @Provides
+    @Singleton
+    fun providerNotificationManager(
+        @ApplicationContext appContext: Context,
+        idGenerator: NotificationIDGenerator
+    ): NotificationManager {
+        return NotificationManager(appContext, idGenerator)
+    }
+
+    @Provides
+    @Singleton
+    fun providerNotificationIDGenerator(sharedPreferences: SharedPreferences): NotificationIDGenerator {
+        return NotificationIDGenerator.SharedPreferenceImpl(sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun providerSharedPreference(@ApplicationContext appContext: Context): SharedPreferences {
+        return appContext.getSharedPreferences(Const.SHARED_PREFERENCE_NAME, MODE_PRIVATE)
     }
 
     @Provides
@@ -226,6 +252,14 @@ object AppModule {
         routeRepository: RouteRepository
     ): GetEstimateRoutes {
         return GetEstimateRoutes(estimateTimeOfArrivalRepository, routeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providerObserveApproachInfo(
+        estimateTimeOfArrivalRepository: EstimateTimeOfArrivalRepository
+    ): ObserveApproachInfo {
+        return ObserveApproachInfo(estimateTimeOfArrivalRepository)
     }
 
     @Provides

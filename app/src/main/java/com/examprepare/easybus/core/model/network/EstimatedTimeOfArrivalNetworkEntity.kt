@@ -65,6 +65,8 @@ data class EstimatedTimeOfArrivalNetworkEntity(
         EstimateTimeOfArrival(
             routeID,
             stopID,
+            routeName.Zh_tw,
+            stopName.zhTw,
             plateNumb,
             when (direction) {
                 0 -> Direction.Departure

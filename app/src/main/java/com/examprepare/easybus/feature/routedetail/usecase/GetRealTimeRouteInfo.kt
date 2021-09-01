@@ -98,6 +98,7 @@ class GetRealTimeRouteInfo @Inject constructor(
                         stop.stopName,
                         estimateTimeOfArrival?.stopStatus ?: StopStatus.None,
                         stop.stopSequence,
+                        estimateTimeOfArrival?.direction ?: Direction.UnKnown,
                         estimateTimeOfArrival?.plateNumb,
                         estimateTimeOfArrival?.estimateTime,
                         estimateTimeOfArrival?.isLastBus == true

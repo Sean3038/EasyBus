@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.examprepare.easybus.Const
 import com.examprepare.easybus.core.ui.FailureView
 import com.examprepare.easybus.core.ui.StopStatusBadge
+import com.examprepare.easybus.feature.model.Direction
 import com.examprepare.easybus.feature.model.Route
 import com.examprepare.easybus.feature.routedetail.model.RealTimeRouteInfo
 import com.examprepare.easybus.ui.theme.EasyBusTheme
@@ -36,6 +37,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RouteScreen(
     viewModel: RouteDetailViewModel,
+    observeApproachNotify: (routeId: String, stopId: String, direction: Direction, minute: Int) -> Unit,
     routeId: String,
     toStation: (String) -> Unit,
     onBack: () -> Unit
@@ -68,6 +70,7 @@ fun RouteScreen(
         route = route,
         realTimeRouteInfoList = realTimeRouteInfoList,
         isLike = isLike,
+        observeApproachNotify = observeApproachNotify,
         toStation = toStation,
         onBack = onBack,
         onLike = viewModel::addLikeRoute,
@@ -82,6 +85,7 @@ fun Route(
     route: Route,
     realTimeRouteInfoList: List<RealTimeRouteInfo>,
     isLike: Boolean,
+    observeApproachNotify: (routeId: String, stopId: String, direction: Direction, minute: Int) -> Unit,
     toStation: (String) -> Unit,
     onBack: () -> Unit,
     onLike: (String) -> Unit,
@@ -118,7 +122,12 @@ fun Route(
                     val settings = Const.APPROACH_NOTIFY_MINUTES_SETTINGS
                     RouteNotifyApproachSetting(settings.map { "$it 分鐘" }) {
                         scope.launch {
-                            //TODO 到站提醒
+                            observeApproachNotify(
+                                route.routeId,
+                                bottomSheet.item.stopId,
+                                bottomSheet.item.direction,
+                                settings[it]
+                            )
                             bottomSheetState.hide()
                             bottomSheet = BottomSheet.None
                         }
@@ -328,6 +337,7 @@ private fun RouteScreenPreview() {
             route = Route("01", "紅12", "XXX", "XXX"),
             realTimeRouteInfoList = emptyList(),
             isLike = true,
+            observeApproachNotify = { _, _, _, _ -> },
             toStation = { },
             onBack = { },
             onLike = { },

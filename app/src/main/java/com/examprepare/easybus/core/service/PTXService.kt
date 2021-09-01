@@ -69,6 +69,16 @@ class PTXService(private val api: PTXApi) {
         return api.estimatedTimeOfArrival(city, filter, "RouteName/Zh_tw")
     }
 
+    suspend fun estimateTimeOfArrival(
+        city: String,
+        routeId: String,
+        stopId: String,
+        direction: Int,
+    ): List<EstimatedTimeOfArrivalNetworkEntity> {
+        val filter = "RouteID eq '$routeId' and StopID eq '$stopId' and Direction eq $direction"
+        return api.estimatedTimeOfArrival(city, filter, null)
+    }
+
     suspend fun getDisplayStopOfRoute(
         city: String,
         routeId: String
