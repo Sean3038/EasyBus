@@ -4,17 +4,20 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import com.examprepare.easybus.core.exception.Failure
 import com.examprepare.easybus.core.navigation.Destinations.Route
 import com.examprepare.easybus.core.navigation.EasyBusApp
 import com.examprepare.easybus.core.notification.NotificationManager
 import com.examprepare.easybus.feature.model.Direction
 import com.examprepare.easybus.feature.notifyapproach.NotifyApproachViewModel
+import com.examprepare.easybus.feature.notifyapproach.exception.NotifyApproachFailure
 import com.examprepare.easybus.feature.notifyapproach.model.ApproachInfo
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,6 +66,20 @@ class MainActivity : ComponentActivity() {
                     message = "公車${it.routeName}在${it.targetMinute}分鐘內抵達${it.stopName}，點擊查看",
                     pendingIntent = deepLinkPendingIntent
                 )
+
+            }
+        }
+        lifecycleScope.launchWhenCreated {
+            notifyApproachViewModel.failure.collect {
+                when (it) {
+                    NotifyApproachFailure.NoEstimateArrivalFailure -> showToastMessage("無法觀測此站時間")
+                    Failure.NetworkConnection -> showToastMessage("網路連接失敗")
+                    Failure.ServerError -> showToastMessage("無法連接伺服器")
+                    Failure.None -> {
+                    }
+                    else -> showToastMessage("發生未知錯誤")
+                }
+                notifyApproachViewModel.onDismissFailure()
             }
         }
     }
@@ -73,6 +90,10 @@ class MainActivity : ComponentActivity() {
 
     private fun toSystemLocationSetting() {
         startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+    }
+
+    private fun showToastMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun observeApproachNotify(

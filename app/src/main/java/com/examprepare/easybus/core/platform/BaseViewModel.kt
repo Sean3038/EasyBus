@@ -4,6 +4,7 @@ package com.examprepare.easybus.core.platform
 import androidx.lifecycle.ViewModel
 import com.examprepare.easybus.core.exception.Failure
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
@@ -13,8 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 abstract class BaseViewModel : ViewModel() {
 
-    private val _failure: MutableStateFlow<Failure> = MutableStateFlow(Failure.None)
-    val failure = _failure.asStateFlow()
+    private val _failure = MutableStateFlow<Failure>(Failure.None)
+    val failure: StateFlow<Failure> = _failure.asStateFlow()
 
     protected fun handleFailure(failure: Failure) {
         _failure.value = failure
