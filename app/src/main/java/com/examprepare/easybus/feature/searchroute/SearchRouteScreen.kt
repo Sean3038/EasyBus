@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.examprepare.easybus.core.ui.FailureView
 import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.feature.model.SearchRouteResult
 import com.examprepare.easybus.ui.theme.EasyBusTheme
@@ -36,6 +37,7 @@ fun SearchRouteScreen(
 ) {
     val searchRouteName = viewModel.searchRouteName.collectAsState().value
     val items = viewModel.items.collectAsState().value
+    val failure = viewModel.failure.collectAsState().value
     SearchRoute(
         searchText = searchRouteName,
         routes = items,
@@ -43,6 +45,8 @@ fun SearchRouteScreen(
         toRoute = toRoute,
         onBack = onBack
     )
+
+    FailureView(failure = failure, onDismissCallback = viewModel::onDismissFailure)
 }
 
 @Composable

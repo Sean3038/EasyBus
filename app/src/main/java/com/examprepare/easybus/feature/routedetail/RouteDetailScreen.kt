@@ -76,7 +76,7 @@ fun RouteScreen(
         onLike = viewModel::addLikeRoute,
         onRemoveLike = viewModel::removeLikeRoute
     )
-    FailureView(failure = failure)
+    FailureView(failure = failure,onDismissCallback = viewModel::onDismissFailure)
 }
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)

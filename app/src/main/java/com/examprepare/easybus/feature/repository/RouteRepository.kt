@@ -43,7 +43,7 @@ interface RouteRepository {
                             Either.Right(routeEntity.toRoute())
                         }
                     }
-                    false -> Either.Left(Failure.ServerError)
+                    false -> Either.Left(Failure.NetworkConnection)
                 }
             } catch (exception: Throwable) {
                 Timber.e(exception)

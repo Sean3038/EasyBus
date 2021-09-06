@@ -64,10 +64,10 @@ fun StationDetailScreen(
 
     when (failure) {
         NoStationFailure -> {
-            FailureDialog("找不到該站位")
+            FailureDialog("找不到該站位", onDismissCallback = viewModel::onDismissFailure)
         }
         else -> {
-            FailureView(failure = failure)
+            FailureView(failure = failure, onDismissCallback = viewModel::onDismissFailure)
         }
     }
 }

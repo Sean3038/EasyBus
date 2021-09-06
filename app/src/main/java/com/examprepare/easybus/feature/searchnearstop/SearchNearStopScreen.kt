@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.examprepare.easybus.Const
 import com.examprepare.easybus.R
+import com.examprepare.easybus.core.ui.FailureView
 import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.core.util.rememberMapViewWithLifecycle
 import com.examprepare.easybus.feature.model.Station
@@ -52,6 +53,7 @@ fun SearchNearStopScreen(
 ) {
     val location = remember { mutableStateOf<Location?>(null) }
     val nearStations = viewModel.nearStations.collectAsState().value
+    val failure = viewModel.failure.collectAsState().value
 
     RequestLocation(
         location = location,
@@ -76,6 +78,8 @@ fun SearchNearStopScreen(
         toStation = toStation,
         onBack = onBack
     )
+
+    FailureView(failure = failure, onDismissCallback = viewModel::onDismissFailure)
 }
 
 @Composable

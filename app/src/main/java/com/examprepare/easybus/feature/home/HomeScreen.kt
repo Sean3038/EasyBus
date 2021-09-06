@@ -38,7 +38,8 @@ fun HomeScreen(
         toSearchNearStop = toSearchNearStop,
         openRoute = openRoute
     )
-    FailureView(failure = failure)
+
+    FailureView(failure = failure, onDismissCallback = viewModel::onDismissFailure)
 }
 
 @Composable
