@@ -13,11 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.examprepare.easybus.Const
+import com.examprepare.easybus.core.ui.FailureDialog
 import com.examprepare.easybus.core.ui.FailureView
 import com.examprepare.easybus.core.ui.StopStatusBadge
 import com.examprepare.easybus.core.ui.TitleBar
 import com.examprepare.easybus.feature.model.Station
-import com.examprepare.easybus.feature.stationdetail.exception.NoStationFailure
+import com.examprepare.easybus.feature.repository.exception.NoStationFailure
 import com.examprepare.easybus.feature.stationdetail.model.EstimateRoute
 import com.examprepare.easybus.ui.theme.Red400
 import kotlinx.coroutines.Job
@@ -61,10 +62,13 @@ fun StationDetailScreen(
         onBack = navigateBack
     )
 
-    if (failure is NoStationFailure) {
-        TODO("Station not found")
-    } else {
-        FailureView(failure = failure)
+    when (failure) {
+        NoStationFailure -> {
+            FailureDialog("找不到該站位")
+        }
+        else -> {
+            FailureView(failure = failure)
+        }
     }
 }
 
@@ -76,7 +80,7 @@ fun StationDetail(
     onBack: () -> Unit
 ) {
     Scaffold(topBar = {
-        TitleBar(station.stationName,onBack)
+        TitleBar(station.stationName, onBack)
     }) {
         LazyColumn {
             items(routes) {

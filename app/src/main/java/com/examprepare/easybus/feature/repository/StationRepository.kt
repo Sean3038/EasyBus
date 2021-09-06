@@ -6,7 +6,7 @@ import com.examprepare.easybus.core.functional.Either
 import com.examprepare.easybus.core.platform.NetworkHandler
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.model.Station
-import com.examprepare.easybus.feature.stationdetail.exception.NoStationFailure
+import com.examprepare.easybus.feature.repository.exception.NoStationFailure
 import timber.log.Timber
 
 interface StationRepository {

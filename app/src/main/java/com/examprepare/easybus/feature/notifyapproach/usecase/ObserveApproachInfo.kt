@@ -4,7 +4,7 @@ import com.examprepare.easybus.core.exception.Failure
 import com.examprepare.easybus.core.functional.Either
 import com.examprepare.easybus.core.interactor.UseCase
 import com.examprepare.easybus.feature.model.Direction
-import com.examprepare.easybus.feature.notifyapproach.exception.NotifyApproachFailure
+import com.examprepare.easybus.feature.notifyapproach.exception.NoEstimateArrivalFailure
 import com.examprepare.easybus.feature.notifyapproach.model.ApproachInfo
 import com.examprepare.easybus.feature.repository.EstimateTimeOfArrivalRepository
 import kotlinx.coroutines.delay
@@ -30,7 +30,7 @@ class ObserveApproachInfo @Inject constructor(
             }
 
             if (estimateResult.estimateTime == null) {
-                return Either.Left(NotifyApproachFailure.NoEstimateArrivalFailure)
+                return Either.Left(NoEstimateArrivalFailure)
             }
 
             if (estimateResult.estimateTime < params.targetMinute * 60) return Either.Right(

@@ -17,7 +17,7 @@ import com.examprepare.easybus.core.navigation.EasyBusApp
 import com.examprepare.easybus.core.notification.NotificationManager
 import com.examprepare.easybus.feature.model.Direction
 import com.examprepare.easybus.feature.notifyapproach.NotifyApproachViewModel
-import com.examprepare.easybus.feature.notifyapproach.exception.NotifyApproachFailure
+import com.examprepare.easybus.feature.notifyapproach.exception.NoEstimateArrivalFailure
 import com.examprepare.easybus.feature.notifyapproach.model.ApproachInfo
 import com.examprepare.easybus.ui.theme.EasyBusTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launchWhenCreated {
             notifyApproachViewModel.failure.collect {
                 when (it) {
-                    NotifyApproachFailure.NoEstimateArrivalFailure -> showToastMessage("無法觀測此站時間")
+                    NoEstimateArrivalFailure -> showToastMessage("無法觀測此站時間")
                     Failure.NetworkConnection -> showToastMessage("網路連接失敗")
                     Failure.ServerError -> showToastMessage("無法連接伺服器")
                     Failure.None -> {

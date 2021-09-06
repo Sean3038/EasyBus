@@ -24,7 +24,6 @@ import com.examprepare.easybus.feature.routedetail.usecase.RemoveLikeRoute
 import com.examprepare.easybus.feature.searchnearstop.usecase.GetNearStation
 import com.examprepare.easybus.feature.searchroute.usecase.SearchRoute
 import com.examprepare.easybus.feature.stationdetail.usecase.GetEstimateRoutes
-import com.examprepare.easybus.feature.stationdetail.usecase.GetRoutes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -202,12 +201,6 @@ object AppModule {
     @Singleton
     fun providerGetRoute(routeRepository: RouteRepository): GetRoute {
         return GetRoute(routeRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providerGetRoutes(routeRepository: RouteRepository): GetRoutes {
-        return GetRoutes(routeRepository)
     }
 
     @Provides

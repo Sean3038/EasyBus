@@ -9,12 +9,12 @@ import com.examprepare.easybus.core.model.network.RouteNetworkEntity
 import com.examprepare.easybus.core.platform.NetworkHandler
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.model.Route
+import com.examprepare.easybus.feature.repository.exception.NoRouteFailure
 import timber.log.Timber
 import javax.inject.Inject
 
 interface RouteRepository {
     suspend fun route(routeId: String): Either<Failure, Route>
-    suspend fun getRoutes(routeIds: List<String>): Either<Failure, List<Route>>
 
     class Impl
     @Inject constructor(
@@ -29,32 +29,19 @@ interface RouteRepository {
                 when (networkHandler.isNetworkAvailable()) {
                     true -> {
                         //若沒有暫存則下載資料
-                        val routeEntity =
-                            cacheDatabase.routeEntity().get(routeId)
-                                .firstOrNull() ?: fetchAndCache(routeId)
-                        val result = routeEntity.toRoute()
-                        Either.Right(result)
-                    }
-                    false -> Either.Left(Failure.ServerError)
-                }
-            } catch (exception: Throwable) {
-                Timber.e(exception)
-                Either.Left(Failure.ServerError)
-            }
-        }
-
-        override suspend fun getRoutes(routeIds: List<String>): Either<Failure, List<Route>> {
-            return try {
-                when (networkHandler.isNetworkAvailable()) {
-                    true -> {
-                        val routeEntity =
-                            cacheDatabase.routeEntity().get(routeIds)
-                                .takeIf { it.size == routeIds.size }
-                                ?: fetchAndCache(routeIds)
-                        val result = routeEntity.map {
-                            it.toRoute()
+                        val routeEntity = cacheDatabase.routeEntity().get(routeId).firstOrNull()
+                        if (routeEntity == null) {
+                            when (val fetchResult = fetchAndCache(routeId)) {
+                                is Either.Left -> {
+                                    Either.Left(fetchResult.a)
+                                }
+                                is Either.Right -> {
+                                    Either.Right(fetchResult.b.toRoute())
+                                }
+                            }
+                        } else {
+                            Either.Right(routeEntity.toRoute())
                         }
-                        Either.Right(result)
                     }
                     false -> Either.Left(Failure.ServerError)
                 }
@@ -64,7 +51,7 @@ interface RouteRepository {
             }
         }
 
-        private suspend fun fetchAndCache(routeId: String): RouteLocalEntity {
+        private suspend fun fetchAndCache(routeId: String): Either<Failure, RouteLocalEntity> {
             var entity: RouteNetworkEntity? = null
             for (city in resourceCityArray) {
                 entity = service.getRoute(city, routeId)
@@ -77,26 +64,9 @@ interface RouteRepository {
                     it.DepartureStopNameZh,
                     it.DestinationStopNameZh
                 )
-            } ?: throw RuntimeException("Route not found")
+            } ?: return Either.Left(NoRouteFailure)
             cacheDatabase.routeEntity().insertAll(localEntity)
-            return localEntity
-        }
-
-        private suspend fun fetchAndCache(routeIds: List<String>): List<RouteLocalEntity> {
-            val entities = mutableListOf<RouteNetworkEntity>()
-            for (city in resourceCityArray) {
-                entities.addAll(service.getRoutes(city, routeIds))
-            }
-            val result = entities.map {
-                RouteLocalEntity(
-                    it.RouteID,
-                    it.RouteName.Zh_tw,
-                    it.DepartureStopNameZh,
-                    it.DestinationStopNameZh
-                )
-            }
-            cacheDatabase.routeEntity().insertAll(*result.toTypedArray())
-            return result
+            return Either.Right(localEntity)
         }
     }
 }
