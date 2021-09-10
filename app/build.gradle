@@ -112,4 +112,8 @@ dependencies {
     //accompanist
     implementation "com.google.accompanist:accompanist-permissions:0.17.0"
     implementation "com.google.accompanist:accompanist-pager:0.17.0"
+
+    //mockito
+    testImplementation "org.mockito:mockito-inline:2.8.47"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:3.2.0"
 }
