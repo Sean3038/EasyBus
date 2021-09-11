@@ -11,16 +11,14 @@ import com.examprepare.easybus.core.platform.NetworkHandler
 import com.examprepare.easybus.core.service.PTXService
 import com.examprepare.easybus.feature.model.Route
 import com.examprepare.easybus.feature.repository.exception.NoRouteFailure
+import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-
-class RouteRepositoryTest {
+class RouteRepositoryTest : TestCase() {
 
     companion object {
         private const val TEST_ROUTE_ID = "12345"
@@ -31,11 +29,11 @@ class RouteRepositoryTest {
     }
 
     @Test
-    fun `should return route when local ever cached route data`() {
+    fun `test should return route when local ever cached route data`() {
         //Given
         val mockPTXService = createPTXService()
         val mockNetworkHandler = createNetworkHandler()
-        val mockPTXDataBase = createMockPTXDataBase()
+        val mockPTXDataBase = createPTXDataBase()
 
         val routeRouteLocalEntity = RouteRepository.Impl(
             TEST_RESOURCE_CITY_ARRAY,
@@ -63,11 +61,11 @@ class RouteRepositoryTest {
     }
 
     @Test
-    fun `should return route when retrieve route entity from remote`() {
+    fun `test should return route when retrieve route entity from remote`() {
         //Given
         val mockPTXService = createPTXService()
         val mockNetworkHandler = createNetworkHandler()
-        val mockPTXDataBase = createMockPTXDataBaseNotContainRouteEntity()
+        val mockPTXDataBase = createPTXDataBaseNotContainRouteEntity()
 
         val routeRouteLocalEntity = RouteRepository.Impl(
             TEST_RESOURCE_CITY_ARRAY,
@@ -95,11 +93,11 @@ class RouteRepositoryTest {
     }
 
     @Test
-    fun `should return no route failure when repository not able to retrieve route`() {
+    fun `test should return no route failure when repository not able to retrieve route`() {
         //Given
         val mockPTXService = createPTXServiceNotContainRouteNetworkEntity()
         val mockNetworkHandler = createNetworkHandler()
-        val mockPTXDataBase = createMockPTXDataBaseNotContainRouteEntity()
+        val mockPTXDataBase = createPTXDataBaseNotContainRouteEntity()
 
         val routeRouteLocalEntity = RouteRepository.Impl(
             TEST_RESOURCE_CITY_ARRAY,
@@ -124,11 +122,11 @@ class RouteRepositoryTest {
     }
 
     @Test
-    fun `should return network connection failure when network is disable`() {
+    fun `test should return network connection failure when network is disable`() {
         //Given
         val mockPTXService = mock<PTXService>()
         val mockNetworkHandler = createNetworkHandlerWithNetworkDisable()
-        val mockPTXDataBase = createMockPTXDataBase()
+        val mockPTXDataBase = createPTXDataBase()
 
         val routeRouteLocalEntity = RouteRepository.Impl(
             TEST_RESOURCE_CITY_ARRAY,
@@ -153,11 +151,11 @@ class RouteRepositoryTest {
     }
 
     @Test
-    fun `should return server error failure when get route data and throw exception`() {
+    fun `test should return server error failure when get route data and throw exception`() {
         //Given
         val mockPTXService = createPTXServiceThrowExceptionWhenRetrieveData()
         val mockNetworkHandler = createNetworkHandler()
-        val mockPTXDataBase = createMockPTXDataBaseNotContainRouteEntity()
+        val mockPTXDataBase = createPTXDataBaseNotContainRouteEntity()
 
         val routeRouteLocalEntity = RouteRepository.Impl(
             TEST_RESOURCE_CITY_ARRAY,
@@ -181,7 +179,7 @@ class RouteRepositoryTest {
         })
     }
 
-    private fun createMockPTXDataBase(): PTXDataBase {
+    private fun createPTXDataBase(): PTXDataBase {
         val mockPTXDataBase = mock<PTXDataBase>()
         val mockRouteEntityDao = mock<RouteEntityDao>()
         val mockRouteResult = createTestRouteLocalEntities()
@@ -195,7 +193,7 @@ class RouteRepositoryTest {
         return mockPTXDataBase
     }
 
-    private fun createMockPTXDataBaseNotContainRouteEntity(): PTXDataBase {
+    private fun createPTXDataBaseNotContainRouteEntity(): PTXDataBase {
         val mockPTXDataBase = mock<PTXDataBase>()
         val mockRouteEntityDao = mock<RouteEntityDao>()
 
