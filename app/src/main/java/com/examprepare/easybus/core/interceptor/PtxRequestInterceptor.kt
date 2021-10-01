@@ -1,6 +1,5 @@
 package com.examprepare.easybus.core.interceptor
 
-import com.examprepare.easybus.Const
 import com.examprepare.easybus.HMAC_SHA1
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -9,14 +8,15 @@ import timber.log.Timber
 import java.security.SignatureException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 
-class PtxRequestInterceptor : Interceptor {
+class PtxRequestInterceptor @Inject constructor(private val ptxApiInfo: PtxApiInfo) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val original: Request = chain.request()
 
-        val appId = Const.PTX_APP_ID
-        val appKey = Const.PTX_APP_KEY
+        val appId = ptxApiInfo.id
+        val appKey = ptxApiInfo.key
 
         // 取得當下的UTC時間
         val xDate = getServerTime()
@@ -51,4 +51,6 @@ class PtxRequestInterceptor : Interceptor {
         dateFormat.timeZone = TimeZone.getTimeZone("GMT")
         return dateFormat.format(calendar.time)
     }
+
+    data class PtxApiInfo(val id: String, val key: String)
 }

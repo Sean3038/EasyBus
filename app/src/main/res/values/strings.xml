@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">EasyBus</string>
+    <string name="ptx_api_id">***PTX_API_ID***</string>
+    <string name="ptx_api_key">***PTX_API_KEY***</string>
+    <string name="map_api_key">***MAP_API_KEY***</string>
 </resources>

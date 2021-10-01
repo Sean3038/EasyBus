@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.examprepare.easybus.Const
+import com.examprepare.easybus.R
 import com.examprepare.easybus.core.database.PTXDataBase
 import com.examprepare.easybus.core.database.PersonalDataBase
 import com.examprepare.easybus.core.interceptor.NetworkInterceptor
@@ -44,9 +45,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providerOKHttpClient(): OkHttpClient {
+    fun providerOKHttpClient(@ApplicationContext context: Context): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(PtxRequestInterceptor())
+            .addInterceptor(
+                PtxRequestInterceptor(
+                    PtxRequestInterceptor.PtxApiInfo(
+                        context.getString(R.string.ptx_api_id),
+                        context.getString(R.string.ptx_api_key)
+                    )
+                )
+            )
             .addInterceptor(NetworkInterceptor())
             .build()
     }

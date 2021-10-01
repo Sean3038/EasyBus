@@ -7,9 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="Api_key_here" />
     <application
         android:name=".core.di.EasyBusApplication"
         android:allowBackup="true"
@@ -45,7 +42,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="***REMOVED***" />
+            android:value="@string/map_api_key" />
 
     </application>
 
