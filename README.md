@@ -38,4 +38,4 @@ Test:  `JUnit`、`Mockito`
 
 * 至[GoogleMap](https://developers.google.com/maps)服務申請Map Api Key
 * Download或Clone 此專案
-* 打開[string.xml](app/src/main/res/values/string.xml) 將先前申請的 API ID、API Key 帶入
+* 打開string.xml 將先前申請的 API ID、API Key 帶入
